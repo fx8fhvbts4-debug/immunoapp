@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immunoapp</title>
+    <link rel="stylesheet" href="style.css?v=12">
+    <!-- PDF.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js"></script>
+</head>
+
+<body>
+    <div class="main-content" id="main-content">
+
+        <div class="app-container welcome-container" id="welcome-screen">
+            <div class="welcome-content">
+                <div class="welcome-icon"><img src="icon_cell_final.png" alt="Immunoapp Icon"
+                        style="width: 150px; height: auto;"> <span
+                        style="font-size: 1rem; display: block; margin-top: 5px;">v2.0</span></div>
+                <h2>Prezado estudante,</h2>
+                <p>
+                    Seja muito bem-vindo ao Immunoapp!<br><br>
+                    O material que você encontrará aqui foi criado com suporte de Inteligência Artificial e revisado
+                    integralmente pelo professor para assegurar confiabilidade e precisão. Este é um espaço de apoio ao
+                    aprendizado, pensado para complementar suas leituras e aulas.<br><br>
+                    <strong>Não se esqueça: nada substitui a leitura e o estudo do livro didático.</strong>
+                </p>
+                <button class="control-btn btn-next welcome-btn" onclick="entrarApp()">Li e Concordo</button>
+            </div>
+        </div>
+
+        <div class="app-container hidden" id="home-screen">
+            <!-- Header removed -->
+            <div class="home-screen-inner">
+                <div class="home-intro" style="text-align: center; padding: 10px; color: #475569;">
+                </div>
+
+                <div class="section-header-card">
+                    <div class="header-text">
+                        <h2>Escolha do assunto</h2>
+                    </div>
+                    <div class="header-icon">
+                        🧬
+                    </div>
+                </div>
+
+                <div class="carousel-wrapper">
+                    <button class="carousel-btn prev"
+                        onclick="scrollCarousel(-1, 'subjects-carousel')">&#10094;</button>
+                    <div class="subjects-container" id="subjects-carousel">
+                        <div class="subject-card" data-id="intro" onclick="abrirAssunto('intro')">
+                            <div class="card-visual gradient-1">
+                                <div class="card-icon">📖</div>
+                            </div>
+                            <div class="subject-info">
+                                <div class="subject-title">Introdução e conceitos básicos</div>
+                                <div class="subject-subtitle">Fundamentos da imunidade</div>
+                            </div>
+                        </div>
+
+                        <div class="subject-card" data-id="Celulaseorgaos" onclick="abrirAssunto('Celulaseorgaos')">
+                            <div class="card-visual gradient-2">
+                                <div class="card-icon">🧬</div>
+                            </div>
+                            <div class="subject-info">
+                                <div class="subject-title">Células e órgãos do sistema imune</div>
+                                <div class="subject-subtitle">Anatomia do sistema imune</div>
+                            </div>
+                        </div>
+
+                        <div class="subject-card" data-id="inflamacao" onclick="abrirAssunto('inflamacao')">
+                            <div class="card-visual gradient-3">
+                                <div class="card-icon">🔥</div>
+                            </div>
+                            <div class="subject-info">
+                                <div class="subject-title">Inflamação e migração celular</div>
+                                <div class="subject-subtitle">Resposta e migração</div>
+                            </div>
+                        </div>
+
+                        <div class="subject-card" data-id="anticorpos" onclick="abrirAssunto('anticorpos')">
+                            <div class="card-visual gradient-4">
+                                <div class="card-icon">🛡️</div>
+                            </div>
+                            <div class="subject-info">
+                                <div class="subject-title">Anticorpos</div>
+                                <div class="subject-subtitle">Estrutura e função</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-btn next" onclick="scrollCarousel(1, 'subjects-carousel')">&#10095;</button>
+                </div>
+            </div>
+            <div class="footer-counter"><span id="visitor-count">👀 Acessos: --</span></div>
+        </div>
+
+        <div class="app-container hidden" id="detail-screen">
+            <div class="header">
+                <h1 id="detail-title">Detalhes</h1>
+            </div>
+            <div class="header-action-row">
+                <button class="back-btn" onclick="voltarParaHome()">← Voltar</button>
+            </div>
+
+            <div class="carousel-wrapper">
+                <button class="carousel-btn prev" onclick="scrollCarousel(-1, 'detail-carousel')">&#10094;</button>
+                <div class="subjects-container" id="detail-carousel">
+                    <div class="subject-card" onclick="abrirResumo()">
+                        <div class="card-visual gradient-1">
+                            <div class="card-icon">📝</div>
+                        </div>
+                        <div class="subject-info">
+                            <div class="subject-title">Resumo</div>
+                            <div class="subject-subtitle">Conceitos chave</div>
+                        </div>
+                    </div>
+
+                    <div class="subject-card" onclick="abrirFlashcards()">
+                        <div class="card-visual gradient-2">
+                            <div class="card-icon">⚡</div>
+                        </div>
+                        <div class="subject-info">
+                            <div class="subject-title">Flashcards</div>
+                            <div class="subject-subtitle">Memorização</div>
+                        </div>
+                    </div>
+
+                    <div class="subject-card" onclick="abrirSelecaoNivel()">
+                        <div class="card-visual gradient-3">
+                            <div class="card-icon">❓</div>
+                        </div>
+                        <div class="subject-info">
+                            <div class="subject-title">Quiz</div>
+                            <div class="subject-subtitle">Teste seus conhecimentos</div>
+                        </div>
+                    </div>
+
+                    <div class="subject-card" onclick="abrirMateriais()">
+                        <div class="card-visual gradient-4">
+                            <div class="card-icon">📚</div>
+                        </div>
+                        <div class="subject-info">
+                            <div class="subject-title">Materiais</div>
+                            <div class="subject-subtitle">Complementares</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-btn next" onclick="scrollCarousel(1, 'detail-carousel')">&#10095;</button>
+            </div>
+        </div>
+
+        <div class="app-container hidden" id="level-screen">
+            <div class="header">
+                <h1>Nível do Quiz</h1>
+            </div>
+            <div class="header-action-row">
+                <button class="back-btn" onclick="voltarParaDetalhes()">← Voltar</button>
+            </div>
+            <div class="detail-options">
+                <button class="option-btn" onclick="iniciarQuiz('basico')">Questões básicas</button>
+                <button class="option-btn" onclick="iniciarQuiz('avancado')">Questões avançadas</button>
+                <button class="option-btn" onclick="iniciarAbertas()">Questões abertas</button>
+            </div>
+        </div>
+
+        <div class="app-container hidden" id="quiz-screen">
+            <div class="header">
+                <h1 id="quiz-header-title">Quiz</h1>
+            </div>
+            <div class="header-action-row">
+                <button class="back-btn" onclick="sairQuiz()">✕ Sair</button>
+            </div>
+            <div class="quiz-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress"></div>
+                </div>
+                <div id="quiz-content">
+                    <p class="question-text" id="question-text"></p>
+                    <div class="quiz-options" id="options-container"></div>
+                    <div class="feedback-area" id="feedback"></div>
+                </div>
+                <div id="result-content" class="result-card hidden">
+                    <div class="score-circle">
+                        <span id="final-score">0</span>
+                        <span class="score-label" id="score-total"></span>
+                    </div>
+                    <h2>Quiz Finalizado!</h2>
+                    <button class="control-btn btn-next" style="width: 100%; margin-top: 20px;"
+                        onclick="sairQuiz()">Voltar</button>
+                </div>
+                <div class="quiz-controls" id="quiz-controls">
+                    <button class="control-btn btn-prev" onclick="antQuestao()" id="prev-btn">Anterior</button>
+                    <button class="control-btn btn-next" onclick="proxQuestao()" id="next-btn">Próxima</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-container hidden" id="flashcard-screen">
+            <div class="header">
+                <h1>Flashcards</h1>
+            </div>
+            <div class="header-action-row">
+                <button class="back-btn" onclick="sairFlashcards()">✕ Sair</button>
+            </div>
+            <div class="flashcard-container">
+                <div style="margin-bottom: 10px; color: #64748b;">
+                    <span id="fc-current">1</span> / <span id="fc-total">5</span>
+                </div>
+                <div class="flashcard" onclick="virarCard(this)">
+                    <div class="card-face card-front">
+                        <div class="card-label">Pergunta</div>
+                        <div class="card-content" id="fc-question">...</div>
+                    </div>
+                    <div class="card-face card-back">
+                        <div class="card-label">Resposta</div>
+                        <div class="card-content" id="fc-answer">...</div>
+                    </div>
+                </div>
+                <div class="flashcard-controls">
+                    <button class="control-btn btn-prev" onclick="antFlashcard()" style="flex:1;">Anterior</button>
+                    <button class="control-btn btn-next" onclick="proxFlashcard()" style="flex:1;">Próximo</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-container hidden" id="summary-screen">
+            <div class="header">
+                <h1 id="summary-title">Resumo</h1>
+            </div>
+            <div class="header-action-row">
+                <button class="back-btn" onclick="sairResumo()">✕ Sair</button>
+            </div>
+            <div class="summary-content" id="summary-content-area"></div>
+        </div>
+
+        <div class="app-container hidden" id="open-questions-screen">
+            <div class="header">
+                <h1>Discursivas</h1>
+            </div>
+            <div class="header-action-row">
+                <button class="back-btn" onclick="sairAbertas()">✕ Sair</button>
+            </div>
+            <div class="quiz-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="oq-progress"></div>
+                </div>
+                <div id="oq-content">
+                    <h3 id="oq-number" style="color:var(--primary); text-align:center;">Questão 1</h3>
+                    <p class="question-text" id="oq-text"></p>
+                    <div id="oq-feedback" class="feedback-area"
+                        style="background-color:#f0fdf4; border:1px solid #bbf7d0; color:#166534;">
+                        <strong>Resposta Esperada:</strong><br><span id="oq-answer-text"></span>
+                    </div>
+                    <button class="control-btn btn-next" id="oq-action-btn" style="width:100%; margin-top:20px;">Ver
+                        Resposta</button>
+                </div>
+                <div id="oq-result-content" class="result-card hidden">
+                    <h2>Concluído!</h2>
+                    <button class="control-btn btn-next" style="width: 100%;" onclick="sairAbertas()">Voltar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-container hidden" id="materials-menu-screen">
+            <div class="header">
+                <h1>Materiais complementares</h1>
+            </div>
+            <div class="header-action-row">
+                <button class="back-btn" onclick="sairMateriais()">← Voltar</button>
+            </div>
+            <div class="detail-options">
+                <button id="btn-podcast-generic" class="option-btn">🎧 Podcast</button>
+                <button id="btn-video-generic" class="option-btn">🎞️ Vídeo</button>
+                <button id="btn-infographics-generic" class="option-btn">🖼️ Infográficos</button>
+            </div>
+        </div>
+
+        <div class="app-container hidden" id="video-player-screen">
+            <div class="header">
+                <h1>Vídeo</h1>
+            </div>
+            <div class="header-action-row">
+                <button class="back-btn" onclick="fecharVideo()">✕ Fechar</button>
+            </div>
+            <div style="flex:1; display:flex; align-items:center; background:black; padding:20px;">
+                <video id="main-video" controls width="100%">
+                    <source id="video-source" src="" type="video/mp4">
+                </video>
+            </div>
+        </div>
+
+        <div class="app-container hidden" id="audio-player-screen">
+            <div class="header">
+                <h1>Áudio</h1>
+            </div>
+            <div class="header-action-row">
+                <button class="back-btn" onclick="fecharAudio()">✕ Fechar</button>
+            </div>
+            <div
+                style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:30px; text-align:center;">
+                <div style="font-size:4rem; margin-bottom:20px;">🎧</div>
+                <h2 id="audio-title" style="margin-bottom:20px;"></h2>
+                <audio id="main-audio" controls style="width:100%;">
+                    <source id="audio-source" src="" type="audio/mp4">
+                </audio>
+            </div>
+        </div>
+
+        <div class="app-container hidden" id="infographics-screen">
+            <div class="header">
+                <h1>Infográficos</h1>
+            </div>
+            <div class="header-action-row">
+                <button class="back-btn" onclick="closeInfographics()">✕ Fechar</button>
+            </div>
+            <div class="infographics-container" id="infographics-content">
+            </div>
+        </div>
+
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+            import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+            import { getFirestore, doc, setDoc, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyAG_v2uRiljsMfzgwX9_81dQTmBsq9g7Bw",
+                authDomain: "contador-de-acessos-1f45b.firebaseapp.com",
+                projectId: "contador-de-acessos-1f45b",
+                storageBucket: "contador-de-acessos-1f45b.firebasestorage.app",
+                messagingSenderId: "618600487128",
+                appId: "1:618600487128:web:cf95c3b60726475ab39fad"
+            };
+            const appId = "meu-app-imunologia";
+
+            // Simples detecção para evitar erro em localhost sem servidor
+            const isHttp = (location.protocol === 'http:' || location.protocol === 'https:');
+            if (isHttp) {
+                try {
+                    const app = initializeApp(firebaseConfig);
+                    const auth = getAuth(app);
+                    const db = getFirestore(app);
+                    signInAnonymously(auth).then((user) => {
+                        if (user) {
+                            const counterRef = doc(db, 'artifacts', appId, 'public', 'data', 'analytics', 'site_stats');
+                            setDoc(counterRef, { visits: increment(1) }, { merge: true }).catch(console.warn);
+                            onSnapshot(counterRef, (snap) => {
+                                if (snap.exists()) document.getElementById('visitor-count').innerText = `👀 Acessos: ${snap.data().visits}`;
+                            });
+                        }
+                    }).catch(console.warn);
+                } catch (e) { console.log("Firebase Error", e); }
+            } else {
+                console.log("Firebase ignorado (ambiente local/arquivo)");
+                document.getElementById('visitor-count').innerText = "👀 Modo Local";
+            }
+        </script>
+
+        <script src="dados.js"></script>
+        <script src="app.js?v=6"></script>
+    </div>
+</body>
+
+</html>
