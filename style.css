@@ -201,11 +201,19 @@ body {
         flex-direction: column;
         align-items: center;
         gap: 14px;
+        overflow-y: auto;
+        max-height: 65vh;
+        padding-bottom: 20px;
     }
 
     .subjects-container .subject-card {
         width: 100%;
         max-width: 520px;
+        flex-shrink: 0;
+    }
+
+    .carousel-btn {
+        display: none;
     }
 }
 
@@ -745,6 +753,33 @@ body {
     padding: 30px;
     text-align: center;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    /* Enable scrolling for long content */
+    scrollbar-width: thin;
+    /* Firefox */
+}
+
+/* Mobile Optimization for Flashcards */
+@media (max-width: 480px) {
+    .flashcard {
+        height: 280px;
+        /* Slightly smaller height on mobile */
+    }
+
+    .card-face {
+        padding: 20px;
+        /* Reduced padding */
+    }
+
+    .card-content {
+        font-size: 1.1rem;
+        /* Smaller font size */
+    }
+
+    .card-label {
+        margin-bottom: 10px;
+        font-size: 0.75rem;
+    }
 }
 
 .home-header {

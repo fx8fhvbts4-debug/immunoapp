@@ -911,6 +911,778 @@ window.BANCO_DADOS = {
     },
 
     // ========================================================================
+    // ASSUNTO: IMUNIDADE INATA
+    // ========================================================================
+    "imunidade_inata": {
+        titulo: "Imunidade Inata",
+        resumo: `
+<style>
+    /* CSS Scoped for Imunidade Inata Report */
+    .inata-wrapper {
+        --color-primary: #007bff;
+        --color-secondary: #6c757d;
+        --color-background: #f8f9fa;
+        --color-text: #212529;
+        --color-highlight: #e9ecef;
+        --color-success: #28a745;
+        --color-warning: #ffc107;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--color-background);
+        color: var(--color-text);
+        line-height: 1.6;
+        padding: 0;
+        margin: 0;
+    }
+
+    .inata-container {
+        display: block;
+        max-width: 960px; /* Wider reading area */
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Hide original sidebar */
+    .inata-sidebar {
+        display: none !important;
+    }
+
+    /* Floating Menu Button */
+    .inata-menu-btn {
+        position: fixed;
+        top: 85px;
+        left: 20px;
+        z-index: 2000;
+        background-color: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        font-size: 22px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s, background-color 0.2s;
+    }
+    .inata-menu-btn:hover {
+        transform: scale(1.05);
+        background-color: #0056b3;
+    }
+
+    /* Menu Dropdown */
+    .inata-toc-dropdown {
+        position: fixed;
+        top: 145px;
+        left: 20px;
+        width: 280px;
+        max-height: 60vh;
+        overflow-y: auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        padding: 20px;
+        z-index: 2000;
+        display: none;
+        border: 1px solid rgba(0,0,0,0.05);
+        animation: fadeIn 0.2s ease-out;
+    }
+    .inata-toc-dropdown.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Adjust TOC styles for dropdown */
+    .inata-toc-dropdown h3 {
+        color: var(--color-primary);
+        border-bottom: 1px solid var(--color-highlight);
+        padding-bottom: 10px;
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+    }
+    .inata-toc-dropdown ul {
+        list-style: none;
+        padding: 0;
+    }
+    .inata-toc-dropdown ul li a {
+        text-decoration: none;
+        color: var(--color-text);
+        display: block;
+        padding: 8px 10px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        transition: background-color 0.1s;
+    }
+    .inata-toc-dropdown ul li a:hover {
+        background-color: var(--color-highlight);
+        color: var(--color-primary);
+    }
+    .inata-toc-dropdown ul li a.sub-link {
+        padding-left: 20px;
+        font-size: 0.85em;
+        color: var(--color-secondary);
+    }
+
+
+    
+    /* Conteúdo Principal */
+    .inata-content {
+        flex-grow: 1;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .inata-wrapper h1, .inata-wrapper h2, .inata-wrapper h3 {
+        color: var(--color-primary);
+        margin-top: 0;
+    }
+
+    .inata-wrapper h1 {
+        border-bottom: 3px solid var(--color-primary);
+        padding-bottom: 10px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .inata-wrapper h2 {
+        margin-top: 40px;
+        border-bottom: 2px solid var(--color-highlight);
+        padding-bottom: 5px;
+        color: #0056b3;
+    }
+    
+    .inata-wrapper h3 {
+        margin-top: 30px;
+        color: var(--color-secondary);
+    }
+
+    .inata-wrapper p {
+        margin-bottom: 15px;
+        text-align: justify;
+    }
+
+    /* Tooltip/Item Clicável */
+    .tooltip-trigger {
+        color: var(--color-primary);
+        cursor: pointer;
+        border-bottom: 1px dashed var(--color-primary);
+        position: relative;
+        font-weight: 600;
+    }
+
+    .tooltip-trigger:hover {
+        color: #0056b3;
+        border-bottom-style: solid;
+    }
+
+    /* Caixas de Informação/Quadros Explicativos (<details>) */
+    .inata-wrapper details {
+        margin: 20px 0;
+        padding: 15px;
+        border-left: 5px solid var(--color-success);
+        background-color: #f1f9f2;
+        border-radius: 4px;
+    }
+
+    .inata-wrapper summary {
+        font-weight: bold;
+        cursor: pointer;
+        color: var(--color-success);
+    }
+    
+    .inata-wrapper details p {
+        margin-top: 10px;
+        padding-left: 10px;
+        border-left: 1px solid var(--color-success);
+    }
+
+    /* Tabelas */
+    .inata-wrapper table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 0.95em;
+    }
+
+    .inata-wrapper th, .inata-wrapper td {
+        border: 1px solid var(--color-highlight);
+        padding: 12px;
+        text-align: left;
+    }
+
+    .inata-wrapper th {
+        background-color: var(--color-primary);
+        color: white;
+        font-weight: 600;
+    }
+
+    .inata-wrapper tr:nth-child(even) {
+        background-color: #f3f3f3;
+    }
+
+    /* Listas */
+    .inata-wrapper ul {
+        padding-left: 25px;
+    }
+
+    .inata-wrapper li {
+        margin-bottom: 8px;
+    }
+
+    /* Tags de Imagem */
+    .image-placeholder {
+        display: block;
+        margin: 20px auto;
+        padding: 15px;
+        background-color: var(--color-highlight);
+        border: 1px solid var(--color-secondary);
+        border-radius: 4px;
+        text-align: center;
+        font-style: italic;
+        color: var(--color-secondary);
+        max-width: 100%;
+    }
+    
+    .image-placeholder strong {
+        color: var(--color-text);
+    }
+    
+    /* Modal */
+    .inata-modal {
+        display: none; 
+        position: fixed; 
+        z-index: 1000; 
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto; 
+        background-color: rgba(0,0,0,0.4); 
+        padding-top: 60px;
+    }
+
+    .inata-modal-content {
+        background-color: #fff;
+        margin: 5% auto; 
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; 
+        max-width: 600px;
+        border-radius: 8px;
+        position: relative;
+    }
+
+    .close-btn {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-btn:hover,
+    .close-btn:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
+
+<div class="inata-wrapper">
+    <!-- Floating Menu Button -->
+    <button class="inata-menu-btn" onclick="window.toggleInataMenu()" title="Índice">
+        ☰
+    </button>
+
+    <!-- Dropdown Menu -->
+    <div class="inata-toc-dropdown" id="inata-toc-dropdown">
+        <h3>Índice</h3>
+        <ul id="toc-list"></ul>
+    </div>
+
+    <div class="inata-container">
+        
+        <!-- Sidebar Removed -->
+        
+        <div class="inata-content">
+            <header>
+                <h1>Imunidade Inata</h1>
+                <p>O sistema imune inato representa a primeira e mais rápida linha de defesa do organismo contra patógenos e danos teciduais. Seus mecanismos estão prontos para agir imediatamente, fornecendo a defesa crucial antes que a resposta adaptativa, mais lenta e especializada, possa se desenvolver.</p>
+            </header>
+
+            <section id="visao-geral">
+                <h2>Visão Geral e Funções Essenciais</h2>
+                
+                <p>A imunidade inata não apenas <span class="tooltip-trigger" data-tooltip="defesa-inicial">previne, controla ou elimina infecções</span>, mas também desempenha papéis cruciais no reparo tecidual e na orquestração da imunidade adaptativa.</p>
+                
+                <details>
+                    <summary>As 3 Funções Essenciais da Imunidade Inata</summary>
+                    <p><strong>1. Defesa Inicial:</strong> É a resposta imediata, ativada por microrganismos. Deficiências em seus mecanismos aumentam drasticamente a suscetibilidade a infecções, mesmo com o sistema adaptativo intacto.</p>
+                    <p><strong>2. Limpeza e Reparo:</strong> Mecanismos inatos eliminam células danificadas (reconhecendo <span class="tooltip-trigger" data-tooltip="DAMPs">DAMPs</span>) e iniciam o processo de reparo tecidual.</p>
+                    <p><strong>3. Estímulo da Imunidade Adaptativa:</strong> A inata fornece os "sinais de perigo" necessários para alertar e <span class="tooltip-trigger" data-tooltip="sinal-2">direcionar a resposta adaptativa</span>, garantindo que ela seja otimamente eficaz contra o tipo específico de patógeno (e.g., bactérias vs. vírus).</p>
+                </details>
+
+                <p>As duas principais reações de defesa são a <strong>Inflamatória</strong> (recrutamento de leucócitos e proteínas plasmáticas para destruir e eliminar agentes agressores) e a <strong>Antiviral</strong> (alterações celulares que previnem a replicação viral).</p>
+
+                <h3>Tabela de Comparação: Imunidade Inata vs. Adaptativa</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Característica</th>
+                            <th>Imunidade Inata</th>
+                            <th>Imunidade Adaptativa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Tempo de Resposta</strong></td>
+                            <td>Imediata (pronta ou rapidamente ativada).</td>
+                            <td>Desenvolve-se em vários dias após a exposição.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Memória</strong></td>
+                            <td>Pouca ou nenhuma memória. Qualidade/magnitude não se alteram significativamente após exposição repetida.</td>
+                            <td>Memória robusta. Respostas aumentam em rapidez, magnitude e eficácia após exposição repetida.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Especificidade</strong></td>
+                            <td>Limitada. Reconhece estruturas moleculares compartilhadas (PAMPs/DAMPs). Cerca de 1.000 padrões.</td>
+                            <td>Alta. Reconhece detalhes estruturais (antígenos). Potencialmente milhões de diferentes estruturas.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Receptores</strong></td>
+                            <td>Codificados na linhagem germinativa (diversidade limitada). Exemplos: TLRs, NLRs, Lectinas.</td>
+                            <td>Gerados por recombinação somática de segmentos de genes (alta diversidade). Exemplos: TCRs, BCRs (Anticorpos).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <section id="reconhecimento">
+                <h2>Reconhecimento de Microrganismos e Células Danificadas</h2>
+                <p>O sistema inato distingue o "próprio saudável" do "não-próprio perigoso" através de receptores de reconhecimento de padrão que visam duas classes de moléculas:</p>
+                
+                <h3>Padrões Moleculares Associados a Patógenos (PAMPs)</h3>
+                <p>São estruturas moleculares produzidas por patógenos microbianos, frequentemente <strong>essenciais para a sobrevivência</strong> dos microrganismos, o que impede que estes os descartem para evadir à detecção.</p>
+                <ul>
+                    <li><strong>Ácidos Nucleicos:</strong> RNA de fita dupla (dsRNA) viral (um intermediário essencial no ciclo viral), sequências de DNA CpG não metiladas (comuns em procariotos).</li>
+                    <li><strong>Componentes Estruturais:</strong> Lipopolissacarídeos (LPS) em bactérias Gram-negativas, ácido lipoteicoico em Gram-positivas.</li>
+                    <li><strong>Proteínas:</strong> Flagelina (componente de flagelos) e proteínas iniciadas por <span class="tooltip-trigger" data-tooltip="N-formilmetionina">N-formilmetionina</span> (típica de proteínas bacterianas).</li>
+                </ul>
+
+                <h3>Padrões Moleculares Associados ao Dano (DAMPs)</h3>
+                <p>Moléculas endógenas produzidas ou liberadas de células danificadas, estressadas ou mortas (mas geralmente não por apoptose). Sinalizam lesão estéril (e.g., trauma, queimaduras) ou lesão causada por infecção.</p>
+                <ul>
+                    <li><strong>Proteínas de Estresse:</strong> Proteínas de choque térmico (<span class="tooltip-trigger" data-tooltip="HSPs">HSPs</span>).</li>
+                    <li><strong>Conteúdo Nuclear/Intracelular:</strong> HMGB1 (high-mobility group box 1), ATP extracelular (indicando dano), cristais de urato monossódico.</li>
+                </ul>
+                
+                <h3>Receptores de Reconhecimento de Padrão (PRRs)</h3>
+                <p>Os PRRs são expressos em diferentes localizações para monitorar o patógeno onde ele possa estar. Eles podem ser expressos na membrana plasmática, associados às membranas dos endosomas ou livres no citoplasma.</p>
+                <div class="image-placeholder">
+                    <img src="./assets/imunidade_inata/prr_locations.png" alt="Localização dos PRRs" style="max-width: 100%; height: auto; border-radius: 4px;">
+                    <p><strong>Figura 4-1:</strong> Localização celular dos Receptores de Reconhecimento de Padrão (PRRs).</p>
+                </div>
+
+                <h4>Receptores do Tipo Toll (TLRs)</h4>
+                <p>Uma família de glicoproteínas integrais de membrana, conservada evolutivamente, que reconhece uma ampla variedade de PAMPs/DAMPs.</p>
+                <ul>
+                    <li><strong>Localização e Ligantes:</strong>
+                        <ul>
+                            <li><strong>Superfície Celular (TLR1, 2, 4, 5, 6):</strong> Detectam PAMPs extracelulares, como LPS (TLR4) e lipopeptídeos/ácido lipoteicoico (TLR2/1 e TLR2/6).</li>
+                            <li><strong>Endossomas (TLR3, 7, 8, 9):</strong> Detectam ácidos nucleicos microbianos. Essa localização é crucial para distinguir o DNA/RNA viral/bacteriano do ácido nucleico do hospedeiro, que normalmente não está presente nos endossomas. Exemplos: dsRNA (TLR3), ssRNA (TLR7/8), DNA CpG (TLR9).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Sinalização Chave:</strong> A dimerização do TLR recruta proteínas adaptadoras com <span class="tooltip-trigger" data-tooltip="dominio-TIR">Domínio TIR</span>, ativando fatores de transcrição.
+                        <ul>
+                            <li><strong>Via MyD88:</strong> Usada por todos, exceto TLR3. Ativa <strong>NF-κB</strong> e <strong>AP-1</strong>, resultando na expressão de genes inflamatórios (TNF, IL-1, quimiocinas).</li>
+                            <li><strong>Via TRIF:</strong> Usada por TLR3 e TLR4. Ativa <strong>IRF3</strong> e <strong>IRF7</strong>, levando à produção de <span class="tooltip-trigger" data-tooltip="IFNs-tipo-I">Interferons Tipo I</span> (resposta antiviral).</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="image-placeholder">
+                    <img src="./assets/imunidade_inata/tlr_signaling.png" alt="Sinalização dos TLRs" style="max-width: 100%; height: auto; border-radius: 4px;">
+                    <p><strong>Figura 4-3:</strong> Estrutura e vias de sinalização dos Receptores do Tipo Toll (TLRs).</p>
+                </div>
+
+                <h4>Receptores Citosólicos (NLRs, RLRs, CDSs)</h4>
+                <p>Esses receptores detectam infecção ou dano que ocorre no citosol, onde partes dos ciclos de vida de microrganismos (e.g., replicação viral) acontecem.</p>
+                <ul>
+                    <li><strong>Receptores do Tipo NOD (NLRs):</strong> Família de mais de 20 proteínas.
+                        <ul>
+                            <li><strong>NOD1 e NOD2:</strong> Reconhecem peptidoglicanos bacterianos no citosol. Sua ativação forma um complexo de sinalização que ativa o NF-κB, promovendo inflamação. Mutações em NOD2 estão associadas à Doença de Crohn.</li>
+                            <li><strong>Família NLRP (Inflamassoma):</strong> Respondendo a PAMPs e DAMPs (cristais, efluxo de K+), os NLRPs oligomerizam, recrutando a proteína adaptadora ASC e a pró-caspase-1. O complexo ativado (Inflamassoma) cliva a pró-IL-1β e pró-IL-18 em suas formas ativas, secretando-as para induzir uma <span class="tooltip-trigger" data-tooltip="inflamacao-aguda">inflamação aguda</span>. A ativação desregulada causa Síndromes Periódicas Associadas à Criopirina (CAPS).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Receptores do Tipo RIG (RLRs):</strong> Sensores de RNA viral citosólico (e.g., dsRNA e ssRNA), como RIG-I e MDA5. Ativam IRF3/IRF7 e NF-κB, induzindo a produção de Interferons Tipo I (resposta antiviral).</li>
+                    <li><strong>Sensores Citosólicos de DNA (CDSs):</strong> Detectam DNA bacteriano ou viral no citosol. O mecanismo chave envolve a CGAS, que sintetiza o CGAMP, que por sua vez ativa a proteína STING (localizada no RE). A STING promove a fosforilação de IRF3, levando à expressão de IFN Tipo I.</li>
+                </ul>
+            </section>
+            
+            <section id="celulas">
+                <h2>Componentes Celulares do Sistema Imune Inato</h2>
+
+                <h3>Barreiras Epiteliais e Defesas Físico-Químicas</h3>
+                <p>A pele e as superfícies mucosas dos tratos gastrointestinal, respiratório e geniturinário formam barreiras físicas contínuas. A perda da integridade destas barreiras predispõe à infecção.</p>
+                <ul>
+                    <li><strong>Defesas Físicas:</strong> Junções estreitas entre células, camada externa de queratina, muco (contendo mucinas) e ação ciliar/peristaltismo.</li>
+                    <li><strong>Defesas Químicas (Peptídeos Antimicrobianos):</strong>
+                        <ul>
+                            <li><strong>Defensinas (α e β):</strong> Pequenos peptídeos catiônicos produzidos por células epiteliais (e.g., Células de Paneth) e leucócitos. Matam microrganismos (bactérias, fungos, vírus) por inserção e rompimento das membranas microbianas.</li>
+                            <li><strong>Catelicidinas:</strong> Produzidas por neutrófilos e células epiteliais. Protegem por toxicidade direta e ativação de leucócitos. O fragmento LL-37 neutraliza o LPS.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="image-placeholder">
+                    <img src="./assets/imunidade_inata/epithelial_barriers.png" alt="Barreiras Epiteliais" style="max-width: 100%; height: auto; border-radius: 4px;">
+                    <p><strong>Figura 4-5:</strong> Mecanismos de defesa das barreiras epiteliais.</p>
+                </div>
+                
+                <h3>Fagócitos (Neutrófilos e Macrófagos)</h3>
+                <p>São a principal linha de defesa contra microrganismos que rompem as barreiras. Deficiências em sua função levam a infecções bacterianas/fúngicas letais.</p>
+                <ul>
+                    <li><strong>Fagocitose:</strong> A ingestão é mediada por PRRs (receptores de manose, scavenger) ou, de forma mais eficiente, por receptores de opsoninas (como FcγRI para IgG e receptores de Complemento).</li>
+                    <li><strong>Mecanismos Microbicidas no Fagolisossoma:</strong>
+                        <ol>
+                            <li><strong>Espécies Reativas de Oxigênio (ROS):</strong> A fagócito oxidase usa NADPH para reduzir O2 a radicais superóxido e, subsequentemente, a peróxido de hidrogênio e ácido hipoaloso tóxico (<span class="tooltip-trigger" data-tooltip="explosao-respiratoria">Explosão Respiratória</span>).</li>
+                            <li><strong>Óxido Nítrico (NO):</strong> Produzido pela óxido nítrico sintase induzida (<span class="tooltip-trigger" data-tooltip="iNOS">iNOS</span>), o NO combina-se com ROS para formar radicais peroxinitrito altamente reativos.</li>
+                            <li><strong>Enzimas Proteolíticas:</strong> Lisossomais como elastase e catepsina G.</li>
+                        </ol>
+                    </li>
+                    <li><strong>Redes Extracelulares de Neutrófilos (NETs):</strong> Neutrófilos morrem ao extruir seu DNA e conteúdo granular (histonas, elastase, defensinas), formando redes que aprisionam e matam bactérias e fungos.</li>
+                </ul>
+                <div class="image-placeholder">
+                    <img src="./assets/imunidade_inata/phagocytosis_steps.jpg" alt="Etapas da Fagocitose" style="max-width: 100%; height: auto; border-radius: 4px;">
+                    <p><strong>Figura 4-13:</strong> Etapas da fagocitose e mecanismos microbicidas.</p>
+                </div>
+
+                <h3>Células Natural Killer (NK) e Células Linfoides Inatas (ILCs)</h3>
+                <p>ILCs são células derivadas da medula óssea, com morfologia linfoide, mas que não expressam receptores de antígenos de células T/B. São a primeira linha de defesa contra vírus e bactérias intracelulares.</p>
+                <ul>
+                    <li><strong>ILCs Grupo 1 (inclui Células NK):</strong> Produzem IFN-γ.
+                        <ul>
+                            <li><strong>Citotoxicidade:</strong> Células NK matam células infectadas ou estressadas por apoptose, usando perforina e granzimas (mecanismo similar aos CTLs).</li>
+                            <li><strong>Ativação/Inibição:</strong> A função NK é regulada pelo balanço de sinais entre <strong>Receptores Ativadores</strong> (que reconhecem ligantes em células estressadas, e.g., NKG2D liga MIC-A/B) e <strong>Receptores Inibitórios</strong> (que reconhecem <span class="tooltip-trigger" data-tooltip="MHC-I">MHC de Classe I</span> em células saudáveis).
+                                <p><strong>"Falta do Próprio" (Missing Self):</strong> A inibição é perdida quando vírus inibem a expressão de MHC-I na célula infectada, permitindo que os sinais ativadores prevaleçam e a célula NK mate o alvo.</p>
+                            </li>
+                            <li><strong>Produção de IFN-γ:</strong> Ativadas por IL-12 e IL-15, as NK secretam IFN-γ, que ativa os macrófagos para destruírem microrganismos fagocitados (Fig. 4-7, B).</li>
+                        </ul>
+                    </li>
+                    <li><strong>ILCs Grupo 2:</strong> Produzem IL-5 e IL-13. Envolvidas na defesa contra helmintos e inflamação alérgica.</li>
+                    <li><strong>ILCs Grupo 3:</strong> Produzem IL-17 e IL-22. Atuam na função de barreira intestinal e defesa contra bactérias extracelulares.</li>
+                </ul>
+            </section>
+
+            <section id="moleculas-soluveis">
+                <h2>Moléculas Solúveis e Humorais</h2>
+                <p>Fornecem defesa contra patógenos fora das células. Atuam principalmente como <strong>opsoninas</strong> (aumentando a fagocitose) ou ativando respostas inflamatórias/mecanismos de morte.</p>
+
+                <h3>Sistema Complemento</h3>
+                <p>Consiste em proteínas plasmáticas que trabalham em cascata proteolítica para opsonizar, promover inflamação e lisar microrganismos.</p>
+                <div class="image-placeholder">
+                    <img src="./assets/imunidade_inata/complement_activation.jpg" alt="Ativação do Complemento" style="max-width: 100%; height: auto; border-radius: 4px;">
+                    <p><strong>Figura 4-10:</strong> Vias de ativação e funções efetoras do Sistema Complemento.</p>
+                </div>
+                
+                <p>As três vias de iniciação (todas culminam na clivagem de C3 em C3a e C3b):</p>
+                <ul>
+                    <li><strong>Via Alternativa:</strong> Disparada por C3 que reconhece diretamente estruturas microbianas (e.g., LPS). É a via mais antiga e crucial na inata, pois distingue o próprio do não-próprio pela ausência de proteínas regulatórias nas superfícies microbianas.</li>
+                    <li><strong>Via da Lectina:</strong> Disparada pela <span class="tooltip-trigger" data-tooltip="MBL">Lectina Ligante de Manose (MBL)</span>, que reconhece resíduos de manose terminal em glicoproteínas microbianas. MBL se associa a serinoproteases (MASP1/2) para iniciar a cascata.</li>
+                    <li><strong>Via Clássica:</strong> Inicia-se quando a proteína C1q se liga a anticorpos (IgM/IgG) ou a <span class="tooltip-trigger" data-tooltip="Pentraxinas">Pentraxinas</span> ligadas ao patógeno.</li>
+                </ul>
+                <p><strong>Funções Efetoras:</strong> <strong>C3b</strong> é uma potente opsonina. <strong>C3a e C5a</strong> são quimioatraentes e mediadores inflamatórios. O <strong>Complexo de Ataque à Membrana (MAC - C5b-9)</strong> forma poros na membrana, lisando o microrganismo.</p>
+                
+                <h3>Pentraxinas, Colectinas e Ficolinas</h3>
+                <ul>
+                    <li><strong>Pentraxinas:</strong>
+                        <ul>
+                            <li><strong>Proteína C-Reativa (PCR) e Amiloide P Sérica (SAP):</strong> Pentraxinas pequenas, reagentes de fase aguda (sintetizadas no fígado em resposta a IL-1/IL-6). Ligam-se a bactérias/fungos (e.g., fosforilcolina) e ativam a via clássica do complemento por ligação ao C1q.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Colectinas e Ficolinas:</strong> Moléculas com caudas do tipo colágeno.
+                        <ul>
+                            <li><strong>MBL (Colectina):</strong> Além de ativar o complemento, atua como opsonina.</li>
+                            <li><strong>SP-A e SP-D (Colectinas Surfactantes):</strong> Encontradas nos alvéolos pulmonares. Ligam-se a microrganismos e atuam como opsoninas para macrófagos alveolares.</li>
+                            <li><strong>Ficolinas:</strong> Estruturalmente similares às colectinas, ligam-se a N-acetilglucosamina e ácido lipoteicoico, opsonizando e ativando o complemento.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+            
+            <section id="inflamacao-citocinas">
+                <h2>A Resposta Inflamatória e as Citocinas Chave</h2>
+                <p>A inflamação aguda é o acúmulo de leucócitos, proteínas plasmáticas e fluido no tecido extravascular. É induzida por <span class="tooltip-trigger" data-tooltip="mediadores-inflamatorios">mediadores inflamatórios</span> liberados por células residentes (mastócitos, macrófagos, células endoteliais) em resposta a PAMPs/DAMPs.</p>
+
+                <h3>Principais Citocinas Pró-Inflamatórias</h3>
+                <p>Produzidas principalmente por macrófagos e células dendríticas, essas citocinas agem localmente (parácrina) ou sistemicamente (endócrina) em infecções graves.</p>
+                <ul>
+                    <li><strong>Fator de Necrose Tumoral (TNF):</strong> Mediador primário da inflamação aguda. Induzido por PAMPs (via TLRs/NLRs/RLRs).
+                        <ul>
+                            <li><strong>Ações Locais:</strong> Ativa células endoteliais (aumentando a expressão de moléculas de adesão/quimiocinas) e neutrófilos, promovendo o recrutamento de leucócitos.</li>
+                            <li><strong>Ações Sistêmicas Protetoras:</strong> Induz febre no hipotálamo.</li>
+                            <li><strong>Ações Sistêmicas Patológicas (Choque Séptico):</strong> Em grandes quantidades, causa colapso vascular (inibe contratilidade miocárdica/tônus vascular), trombose intravascular (prejuízo das propriedades anticoagulantes do endotélio) e caquexia (fadiga de músculo/gordura).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Interleucina-1 (IL-1β):</strong> Ações similares ao TNF. Sua produção requer dois sinais: 1) ativação do NF-κB (TLR) para produzir o precursor Pró-IL-1β, e 2) ativação do <span class="tooltip-trigger" data-tooltip="inflamassoma-IL1">Inflamassoma NLRP3</span> para clivar o precursor em IL-1β ativo. Medeia febre e síntese de reagentes de fase aguda.</li>
+                    <li><strong>Interleucina-6 (IL-6):</strong> Induzida por PAMPs, IL-1 e TNF. É o principal indutor da síntese de <strong>Reagentes de Fase Aguda</strong> (PCR, SAP, fibrinogênio) no fígado.</li>
+                    <li><strong>IL-12:</strong> Secretada por Células Dendríticas e Macrófagos. Estimula Células NK e T a produzir <span class="tooltip-trigger" data-tooltip="IFN-gama">IFN-γ</span> (ativação de macrófagos) e promove a diferenciação de células T em TH1.</li>
+                </ul>
+                <div class="image-placeholder">
+                    <img src="./assets/imunidade_inata/cytokine_actions.jpg" alt="Ações das Citocinas" style="max-width: 100%; height: auto; border-radius: 4px;">
+                    <p><strong>Figura 4-15:</strong> Ações locais e sistêmicas das citocinas inflamatórias (TNF, IL-1, IL-6).</p>
+                </div>
+            </section>
+
+            <section id="antiviral">
+                <h2>Resposta Antiviral: Interferons Tipo I (IFN-α/β)</h2>
+                <p>A principal defesa inata contra vírus é a indução de Interferons Tipo I (IFN-α e IFN-β), que agem inibindo a replicação viral.</p>
+                <ul>
+                    <li><strong>Indução:</strong> IFN- α é primariamente produzido por <span class="tooltip-trigger" data-tooltip="pDCs">Células Dendríticas Plasmacitoides (pDCs)</span>. A indução ocorre quando ácidos nucleicos virais são reconhecidos por TLRs endossomais (TLR3, 7, 8, 9), RLRs citosólicos (RIG-I, MDA5) e CDSs (via STING). Todos ativam a família de fatores de transcrição <strong>IRF</strong>, levando à expressão de IFN-α/β.</li>
+                    <li><strong>Estado Antiviral:</strong> O IFN Tipo I secretado age (via receptores em todas as células nucleadas) para induzir a expressão de enzimas que bloqueiam a replicação viral nas células vizinhas não infectadas (<span class="tooltip-trigger" data-tooltip="estado-antiviral">Estado Antiviral</span>).</li>
+                    <li><strong>Outras Funções:</strong>
+                        <ul>
+                            <li>Aumentam a citotoxicidade de Células NK e CTLs.</li>
+                            <li>Regulam positivamente a expressão de <strong>MHC de Classe I</strong>, aumentando a probabilidade de células infectadas serem reconhecidas e mortas por CTLs CD8+.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section id="adaptativa">
+                <h2>Estímulo e Direcionamento da Imunidade Adaptativa</h2>
+                <p>A resposta inata fornece os **segundos sinais** (além do antígeno - sinal 1) necessários para a proliferação e diferenciação ótimas dos linfócitos T e B.</p>
+                
+                <details>
+                    <summary>Hipótese dos Dois Sinais para Ativação de Linfócitos</summary>
+                    <p><strong>Sinal 1 (Específico):</strong> O reconhecimento do antígeno pelo receptor de antígeno do linfócito (TCR ou BCR). Garante a especificidade.</p>
+                    <p><strong>Sinal 2 (Inato):</strong> Moléculas induzidas pelas respostas imunes inatas (e.g., coestimuladores nas Células Dendríticas, citocinas, ou fragmentos do complemento). Garante que a resposta adaptativa seja induzida quando houver **infecção danosa**, e não contra autoantígenos ou antígenos inofensivos.</p>
+                </details>
+                
+                <ul>
+                    <li><strong>Células Dendríticas (CDs):</strong> Ativadas por PAMPs (sinalização de TLR), CDs aumentam a expressão de <strong>coestimuladores</strong> (e.g., CD80, CD86 - Sinal 2 para T) e migram para linfonodos. Ali, elas apresentam o antígeno (Sinal 1) e fornecem os sinais 2 e citocinas que ativam e diferenciam as células T.</li>
+                    <li><strong>Direcionamento da Resposta:</strong> A natureza da resposta inata molda o tipo de resposta adaptativa. Por exemplo:
+                        <ul>
+                            <li>IL-12 e IFN-γ: Estimulam a diferenciação de T CD4+ em células TH1 (defesa contra patógenos intracelulares).</li>
+                            <li>IL-1, IL-6 e IL-23: Estimulam a diferenciação em células TH17 (defesa contra bactérias extracelulares/fungos).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Adjuvantes:</strong> Substâncias (como alúmen) usadas em vacinas que atuam ativando a resposta imune inata (e.g., ativando o inflamassoma ou TLRs) para garantir que o antígeno purificado elicite uma resposta adaptativa robusta.</li>
+                </ul>
+            </section>
+            
+            <section id="regulacao">
+                <h2>Mecanismos de Regulação e Limitação da Resposta Inata</h2>
+                <p>A resposta inflamatória, embora essencial, tem potencial de causar dano tecidual. Por isso, mecanismos de <span class="tooltip-trigger" data-tooltip="retroalimentacao-negativa">retroalimentação negativa</span> limitam a magnitude e a duração da resposta inata.</p>
+                <ul>
+                    <li><strong>Interleucina-10 (IL-10):</strong> É uma citocina regulatória produzida por macrófagos e células dendríticas (e células T regulatórias). Ela <strong>inibe</strong> a produção de citocinas inflamatórias (IL-1, TNF, IL-12) pelos macrófagos e células dendríticas ativadas, atuando como um regulador de retroalimentação negativa.</li>
+                    <li><strong>Antagonista do Receptor de IL-1 (IL-1RA):</strong> Produzido por fagócitos mononucleares. É estruturalmente homólogo à IL-1, mas biologicamente inativo. Liga-se ao receptor de IL-1 (IL-1R) como um inibidor competitivo, bloqueando a sinalização da IL-1 ativa.</li>
+                    <li><strong>Proteínas Supressoras de Sinalização de Citocinas (SOCS):</strong> Inibem as vias de sinalização JAK-STAT associadas aos receptores de citocinas (e.g., Interferons).</li>
+                    <li><strong>SHP-1:</strong> Uma proteína fosfatase intracelular que regula negativamente a sinalização de TLRs e outras vias dependentes de tirosinoquinases.</li>
+                </ul>
+            </section>
+            
+        </div>
+        
+    </div>
+
+    <div id="infoModal" class="inata-modal">
+        <div class="inata-modal-content">
+            <span class="close-btn" onclick="window.closeModal()">&times;</span>
+            <h3 id="modalTitle" style="color: var(--color-primary);"></h3>
+            <p id="modalText"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // JavaScript para Interatividade e Navegação
+
+    // 1. Geração do Índice de Conteúdo (TOC)
+    (function() {
+        const content = document.querySelector('.inata-content');
+        const tocList = document.getElementById('toc-list');
+        if (!content || !tocList) return;
+        
+        const sections = content.querySelectorAll('section');
+
+        sections.forEach(section => {
+            const h2 = section.querySelector('h2');
+            if (!h2) return;
+            const sectionTitle = h2.textContent;
+            const sectionId = section.id;
+
+            // Adiciona o link principal ao TOC
+            let listItem = document.createElement('li');
+            let link = document.createElement('a');
+            link.href = '#' + sectionId;
+            link.textContent = sectionTitle;
+            listItem.appendChild(link);
+            
+            // Adiciona links de subseções (h3)
+            const subHeadings = section.querySelectorAll('h3');
+            if (subHeadings.length > 0) {
+                let subList = document.createElement('ul');
+                subHeadings.forEach(sub => {
+                    let subListItem = document.createElement('li');
+                    let subLink = document.createElement('a');
+                    
+                    // Cria um ID se não existir (necessário para sub-links)
+                    let subId = sub.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                    sub.id = subId; 
+                    
+                    subLink.href = '#' + subId;
+                    subLink.textContent = sub.textContent;
+                    subLink.classList.add('sub-link');
+                    subListItem.appendChild(subLink);
+                    subList.appendChild(subListItem);
+                });
+                listItem.appendChild(subList);
+            }
+
+            tocList.appendChild(listItem);
+        });
+        
+        // Adiciona listener para rolar suavemente ao clicar nos links do TOC
+        tocList.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const href = e.target.getAttribute('href');
+                if (!href) return;
+                const targetId = href.substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Close menu on click
+                    window.toggleInataMenu();
+                }
+            }
+        });
+    })();
+
+    // Toggle Menu Function
+    window.toggleInataMenu = function() {
+        const menu = document.getElementById('inata-toc-dropdown');
+        if (menu) {
+            menu.classList.toggle('active');
+        }
+    }
+
+    // Close menu when clicking outside
+    window.addEventListener('click', function(e) {
+        const menu = document.getElementById('inata-toc-dropdown');
+        const btn = document.querySelector('.inata-menu-btn');
+        if (menu && menu.classList.contains('active') && !menu.contains(e.target) && !btn.contains(e.target)) {
+            menu.classList.remove('active');
+        }
+    });
+
+    // 2. Lógica do Modal/Tooltip
+    // Dados dos Tooltips
+    Object.assign(window.tooltips, {
+        'defesa-inicial': {
+            title: 'Defesa Inicial',
+            text: 'A resposta imune inata é a defesa imediata, que atua antes que a resposta adaptativa (que leva dias para se desenvolver) possa ser efetiva. A importância disso é vista em deficiências inatas que aumentam drasticamente a suscetibilidade a infecções, mesmo com a imunidade adaptativa intacta.'
+        },
+        'DAMPs': {
+            title: 'DAMPs (Padrões Moleculares Associados ao Dano)',
+            text: 'Moléculas que sinalizam estresse e dano tecidual (lesão estéril) na ausência de infecção, ou lesão causada por infecção. Incluem ATP extracelular, cristais de urato, e proteínas de choque térmico (HSPs). São cruciais para iniciar o reparo e a inflamação.'
+        },
+        'sinal-2': {
+            title: 'Sinal 2 (Coestimulação)',
+            text: 'No contexto da ativação de linfócitos, o "sinal 2" é a molécula (e.g., coestimulador ou citocina) fornecida pelo sistema inato (geralmente uma Célula Dendrítica) para garantir que a resposta adaptativa seja ativada apenas em caso de perigo real (microrganismos/dano) e não contra autoantígenos inofensivos. O sinal 1 é o antígeno.'
+        },
+        'N-formilmetionina': {
+            title: 'N-formilmetionina',
+            text: 'Este resíduo é característico do início da síntese proteica em **bactérias** (procariotos), mas raro nas proteínas de mamíferos (exceto nas mitocondriais). O receptor N-formil-met-leu-phe (FPR1) em leucócitos reconhece peptídeos contendo N-formilmetionil e estimula o movimento celular (quimiotaxia) em direção à fonte bacteriana.'
+        },
+        'HSPs': {
+            title: 'HSPs (Proteínas de Choque Térmico)',
+            text: 'São chaperonas intracelulares induzidas em resposta a vários estressores celulares. Quando liberadas para o meio extracelular por células danificadas ou morrendo, atuam como DAMPs, ativando receptores como TLR2 e TLR4, alertando o sistema imune inato.'
+        },
+        'dominio-TIR': {
+            title: 'Domínio TIR (Toll/IL-1 Receptor)',
+            text: 'Domínio citoplasmático encontrado nos TLRs e nos receptores das citocinas IL-1 e IL-18. Este domínio é essencial para a sinalização, pois recruta proteínas adaptadoras que iniciam as cascatas de sinalização (e.g., via MyD88 ou TRIF) para ativação de fatores de transcrição.'
+        },
+        'IFNs-tipo-I': {
+            title: 'Interferons Tipo I (IFN-α e IFN-β)',
+            text: 'Citocinas antivirais produzidas em resposta a ácidos nucleicos virais (via RLRs e TLRs endossomais). Sua principal função é induzir o "Estado Antiviral" em células vizinhas, bloqueando a replicação viral. Também aumentam a citotoxicidade de NKs e CTLs.'
+        },
+        'piropotose': {
+            title: 'Piroptose',
+            text: 'Uma forma de morte celular programada, induzida pela Caspase-1 ativada pelo Inflamassoma. É caracterizada por inchaço celular, perda da integridade da membrana e liberação de mediadores inflamatórios (como IL-1β) – diferindo da apoptose, que é silenciosa e não inflamatória.'
+        },
+        'explosao-respiratoria': {
+            title: 'Explosão Respiratória',
+            text: 'O rápido consumo de oxigênio pelos fagócitos ativados, catalisado pela enzima fagócito oxidase, para converter O2 em Espécies Reativas de Oxigênio (ROS), como o superóxido. Essas ROS são agentes oxidantes altamente reativos usados para destruir microrganismos dentro do fagolisossoma.'
+        },
+        'iNOS': {
+            title: 'iNOS (Óxido Nítrico Sintase Induzida)',
+            text: 'Enzima citosólica induzida em macrófagos (por sinais de TLRs e IFN-γ) que catalisa a produção de Óxido Nítrico (NO). O NO se combina com ROS para formar radicais peroxinitrito, poderosos agentes microbicidas no fagolisossoma.'
+        },
+        'MHC-I': {
+            title: 'MHC de Classe I (Complexo Principal de Histocompatibilidade)',
+            text: 'Moléculas de superfície celular expressas em todas as células nucleadas. Sua função primária é apresentar peptídeos citoplasmáticos para linfócitos T CD8+. No contexto da NK, o MHC-I é o ligante para o Receptor Inibitório, sinalizando "célula saudável".'
+        },
+        'MBL': {
+            title: 'MBL (Lectina Ligante de Manose)',
+            text: 'Uma proteína plasmática da família das colectinas. Reconhece resíduos de manose e fucose em microrganismos. Ativa a Via da Lectina do Complemento e atua como opsonina, facilitando a fagocitose.'
+        },
+        'Pentraxinas': {
+            title: 'Pentraxinas (PCR e SAP)',
+            text: 'Proteínas plasmáticas pentaméricas. Atuam como reagentes de fase aguda. Se ligam a microrganismos (e.g., fosforilcolina) e ativam o Complemento via C1q (Via Clássica).'
+        },
+        'inflamacao-aguda': {
+            title: 'Inflamação Aguda',
+            text: 'Uma resposta rápida e inespecífica a danos teciduais ou infecções, caracterizada pelo recrutamento de leucócitos e proteínas plasmáticas para o local da lesão. No contexto do Inflamassoma, a secreção de IL-1β e IL-18 promove essa resposta inflamatória potente.'
+        },
+        'mediadores-inflamatorios': {
+            title: 'Mediadores Inflamatórios',
+            text: 'Pequenas moléculas e citocinas que causam as alterações vasculares da inflamação aguda (dilatação arteriolar, aumento da permeabilidade capilar e adesividade endotelial). Os principais incluem TNF, IL-1, IL-6, quimiocinas e histamina (dos mastócitos).'
+        },
+        'inflamassoma-IL1': {
+            title: 'Inflamassoma e IL-1',
+            text: 'O Inflamassoma (geralmente NLRP3) é o complexo multiproteico que atua como uma plataforma de clivagem. É essencial para processar o precursor Pró-IL-1β na sua forma madura e ativa. Sem o inflamassoma, a IL-1β não é secretada de forma ativa.'
+        },
+        'IFN-gama': {
+            title: 'IFN-γ (Interferon Gama)',
+            text: 'Uma citocina de ativação de macrófagos, produzida por Células NK e, posteriormente, por células T (TH1). O IFN-γ é o principal sinal para o Macrófago matar ativamente os microrganismos fagocitados, aumentando a atividade da fagócito oxidase e iNOS.'
+        },
+        'pDCs': {
+            title: 'Células Dendríticas Plasmacitoides (pDCs)',
+            text: 'Um subgrupo de Células Dendríticas que expressa grande quantidade de TLRs endossomais (TLR7, 9) e é a principal fonte de produção de Interferons Tipo I (IFN-α) na resposta a infecções virais.'
+        },
+        'estado-antiviral': {
+            title: 'Estado Antiviral',
+            text: 'Um estado celular induzido por Interferons Tipo I, no qual a célula aumenta a expressão de enzimas (e.g., PKR, 2′,5′-oligoadenilato sintetase/RNase L) que inibem a síntese proteica viral e degradam o RNA viral, conferindo resistência à infecção viral.'
+        },
+        'retroalimentacao-negativa': {
+            title: 'Retroalimentação Negativa',
+            text: 'Mecanismos regulatórios que limitam a magnitude e a duração de uma resposta. Por exemplo, a IL-10 é produzida por macrófagos ativados e, em seguida, age para inibir a própria produção de citocinas inflamatórias (TNF, IL-12) pelos macrófagos.'
+        }
+    });
+</script>
+        `,
+        midia: {
+            audio: null,
+            video: null,
+            infographics: null
+        },
+        flashcards: [],
+        quiz: {
+            basico: [],
+            avancado: []
+        },
+        abertas: []
+    },
+
+    // ========================================================================
     // ASSUNTO 3: ANTICORPOS
     // ========================================================================
     "anticorpos": {
@@ -1161,5 +1933,2365 @@ window.BANCO_DADOS = {
                 a: "Coestimulação (B7-CD28) é necessária para ativar células T. Se uma célula T reconhece autoantígeno em APC repouso (sem coestimulador), ela não ativa e entra em anergia (não responsividade), mantendo a tolerância periférica."
             }
         ]
+    },
+    "mecanismos_efetores": {
+        titulo: "Mecanismos efetores de anticorpos e Sistema complemento",
+        resumo: `
+<style>
+    /* CSS Scoped for Mecanismos Efetores Report */
+    .efetores-wrapper {
+        --color-primary: #007bff; /* Azul Padrão */
+        --color-secondary: #6c757d;
+        --color-background: #f8f9fa;
+        --color-text: #212529;
+        --color-highlight: #e9ecef;
+        --color-complement: #5d005d; /* Roxo Escuro */
+        --color-warning: #ffc107;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--color-background);
+        color: var(--color-text);
+        line-height: 1.6;
+        padding: 0;
+        margin: 0;
+    }
+
+    .efetores-container {
+        display: block;
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Floating Menu Button */
+    .efetores-menu-btn {
+        position: fixed;
+        top: 85px;
+        left: 20px;
+        z-index: 2000;
+        background-color: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        font-size: 22px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s, background-color 0.2s;
+    }
+    .efetores-menu-btn:hover {
+        transform: scale(1.05);
+        background-color: #5d005d; /* Cor do complemento no hover */
+    }
+
+    /* Menu Dropdown */
+    .efetores-toc-dropdown {
+        position: fixed;
+        top: 145px;
+        left: 20px;
+        width: 280px;
+        max-height: 60vh;
+        overflow-y: auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        padding: 20px;
+        z-index: 2000;
+        display: none;
+        border: 1px solid rgba(0,0,0,0.05);
+        animation: fadeIn 0.2s ease-out;
+    }
+    .efetores-toc-dropdown.active {
+        display: block;
+    }
+    
+    .efetores-toc-dropdown ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .efetores-toc-dropdown li {
+        margin-bottom: 8px;
+    }
+
+    .efetores-toc-dropdown a {
+        text-decoration: none;
+        color: var(--color-text);
+        display: block;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.95em;
+        transition: all 0.2s;
+    }
+
+    .efetores-toc-dropdown a:hover {
+        background-color: var(--color-highlight);
+        color: var(--color-primary);
+    }
+    
+    .efetores-toc-dropdown a.sub-link {
+        padding-left: 24px;
+        font-size: 0.9em;
+        color: var(--color-secondary);
+    }
+
+    /* Content Styling */
+    .efetores-content {
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .efetores-content h1 {
+        color: var(--color-primary);
+        border-bottom: 3px solid var(--color-primary);
+        padding-bottom: 15px;
+        margin-bottom: 40px;
+        text-align: center;
+        font-size: 2.2rem;
+    }
+
+    .efetores-content h2 {
+        margin-top: 50px;
+        border-bottom: 2px solid var(--color-highlight);
+        padding-bottom: 10px;
+        color: var(--color-complement); /* Roxo */
+        font-size: 1.8rem;
+    }
+    
+    .efetores-content h3 {
+        margin-top: 35px;
+        color: var(--color-complement);
+        border-left: 4px solid var(--color-complement);
+        padding-left: 15px;
+        font-size: 1.4rem;
+    }
+    
+    .efetores-content h4 {
+        margin-top: 25px;
+        color: var(--color-text);
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .efetores-content p {
+        margin-bottom: 15px;
+        text-align: justify;
+        font-size: 1.05rem;
+    }
+    
+    .efetores-content ul, .efetores-content ol {
+        margin-bottom: 20px;
+        padding-left: 25px;
+    }
+    
+    .efetores-content li {
+        margin-bottom: 8px;
+    }
+
+    /* Tooltip/Item Clicável */
+    .tooltip-trigger {
+        color: var(--color-primary);
+        cursor: pointer;
+        border-bottom: 1px dashed var(--color-primary);
+        position: relative;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    
+    .complement-trigger {
+        color: var(--color-complement);
+        border-bottom: 1px dashed var(--color-complement);
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .tooltip-trigger:hover, .complement-trigger:hover {
+        background-color: rgba(0,0,0,0.05);
+        border-bottom-style: solid;
+    }
+
+    /* Caixas de Informação/Quadros Explicativos (<details>) */
+    .efetores-content details {
+        margin: 25px 0;
+        padding: 20px;
+        border-left: 5px solid var(--color-warning);
+        background-color: #fffaf0;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .efetores-content summary {
+        font-weight: bold;
+        cursor: pointer;
+        color: var(--color-complement);
+        font-size: 1.1rem;
+    }
+    
+    .efetores-content details p {
+        margin-top: 15px;
+        padding-left: 15px;
+        border-left: 2px solid var(--color-warning);
+        color: #555;
+    }
+
+    /* Tabelas */
+    .efetores-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 30px 0;
+        font-size: 0.95em;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .efetores-content th, .efetores-content td {
+        border: 1px solid var(--color-highlight);
+        padding: 15px;
+        text-align: left;
+    }
+
+    .efetores-content th {
+        background-color: var(--color-primary);
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .efetores-content tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+    
+    /* Destaque para Citações/Observações */
+    .citation-note {
+        font-style: italic;
+        font-size: 0.9em;
+        color: var(--color-secondary);
+        margin-top: -10px;
+        margin-bottom: 25px;
+        display: block;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 6px;
+    }
+
+    /* Tags de Imagem */
+    .image-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 30px auto;
+        padding: 20px;
+        background-color: #fff5f7;
+        border: 1px dashed #ff99aa;
+        border-radius: 8px;
+        text-align: center;
+        color: var(--color-secondary);
+        max-width: 100%;
+    }
+    
+    .image-placeholder img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .image-placeholder p {
+        font-size: 0.9rem;
+        margin-bottom: 0;
+        color: #666;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Modal Styles */
+    .efetores-modal {
+        display: none; 
+        position: fixed; 
+        z-index: 1000; 
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto; 
+        background-color: rgba(0,0,0,0.5); 
+        padding-top: 60px;
+    }
+
+    .efetores-modal-content {
+        background-color: #fff;
+        margin: 5% auto; 
+        padding: 25px;
+        border: 1px solid #ddd;
+        width: 90%; 
+        max-width: 500px;
+        border-radius: 10px;
+        position: relative;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from { transform: translateY(-50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .close-btn {
+        color: #aaa;
+        float: right;
+        font-size: 32px;
+        font-weight: bold;
+        line-height: 1;
+    }
+
+    .close-btn:hover,
+    .close-btn:focus {
+        color: #333;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
+
+<div class="efetores-wrapper">
+    <!-- Floating Menu Button -->
+    <button class="efetores-menu-btn" onclick="window.toggleEfetoresMenu()" title="Índice">
+        ☰
+    </button>
+
+    <!-- Dropdown Menu -->
+    <div id="efetores-toc-dropdown" class="efetores-toc-dropdown">
+        <h3>Índice</h3>
+        <ul id="toc-list-efetores">
+            <!-- TOC generated by JS -->
+        </ul>
+    </div>
+
+    <div class="efetores-container">
+        <div class="efetores-content">
+            <header>
+                <h1>Mecanismos Efetores da Imunidade Humoral</h1>
+                <p>A <span class="tooltip-trigger" data-tooltip="imunidade-humoral">imunidade humoral</span> é a principal defesa contra microrganismos extracelulares e toxinas, sendo mediada por <strong>anticorpos secretados</strong>. Os anticorpos realizam suas funções efetoras em locais distantes de sua produção (órgãos linfoides secundários, medula óssea) e são cruciais na proteção induzida por vacinas.</p>
+                <div class="image-placeholder">
+                    <img src="assets/efetores/figura1.jpg" alt="Visão geral das funções efetoras dos anticorpos">
+                    <p><strong>Figura 1:</strong> Visão geral das funções efetoras dos anticorpos.</p>
+                </div>
+            </header>
+            
+            <section id="funcoes-anticorpos">
+                <h2>Funções Efetoras dos Anticorpos</h2>
+                <p>Muitas funções efetoras dos anticorpos são mediadas pelas <strong>regiões constantes (Fc)</strong> da cadeia pesada da Ig, enquanto a <span class="tooltip-trigger" data-tooltip="neutralizacao">neutralização</span> é a única função mediada inteiramente pela ligação do antígeno às regiões variáveis (Fab).</p>
+
+                <h3>1. Neutralização de Microrganismos e Toxinas</h3>
+                <p>Anticorpos bloqueiam a infecção e o dano patológico por meio do <strong>bloqueio estereoquímico</strong>.</p>
+                <ul>
+                    <li>Anticorpos ligam-se a moléculas superficiais de microrganismos (e.g., hemaglutinina do influenza, pilosidades bacterianas), <span class="tooltip-trigger" data-tooltip="bloqueio-ligacao">impedindo sua ligação</span> a receptores da célula hospedeira.</li>
+                    <li>Anticorpos contra toxinas (e.g., toxina tetânica ou diftérica) bloqueiam sua ligação a receptores celulares, <span class="tooltip-trigger" data-tooltip="bloqueio-toxina">neutralizando seus efeitos patológicos</span>.</li>
+                    <li>Este processo é independente da região Fc e é mediado por anticorpos de <strong>qualquer isotipo</strong> (IgG no sangue, IgA nas mucosas).</li>
+                </ul>
+
+                <h3>2. Opsonização e Fagocitose</h3>
+                <p>Os anticorpos do isotipo <strong>IgG</strong> cobrem (opsonizam) os microrganismos, facilitando sua fagocitose por macrófagos e neutrófilos, que expressam receptores Fc.</p>
+
+                <h4>Receptores Fc em Leucócitos (FcγR)</h4>
+                <p>Receptores para as porções Fc da IgG (<span class="complement-trigger" data-tooltip="FcyRI">FcγRI / CD64</span>, FcγRII, FcγRIII) são cruciais para a internalização de partículas opsonizadas e para a ativação microbicida dos fagócitos.</p>
+                <ul>
+                    <li><strong>FcγRI (CD64):</strong> Principal receptor Fc em <strong>macrófagos e neutrófilos</strong>. Liga-se a IgG1 e IgG3 com <strong>alta afinidade</strong>. É o receptor mais importante para a fagocitose de partículas opsonizadas. Sua expressão é estimulada pelo IFN-γ.</li>
+                    <li><strong>FcγRIIB (CD32):</strong> É o único receptor de Fc que é <strong>inibitório</strong>. Expresso em células B e mieloides, ele inibe a ativação de células B e pode reduzir a inflamação (mecanismo da terapia com IVIG). Contém um <span class="complement-trigger" data-tooltip="ITIM">motivo ITIM</span> na cauda citoplasmática.</li>
+                    <li><strong>Ativação:</strong> A ligação cruzada (agrupamento) dos FcγRs por anticorpos ligados a um antígeno multivalente desencadeia a fosforilação de <span class="complement-trigger" data-tooltip="ITAM">motivos ITAM</span> (em cadeias de sinalização como FcRγ ou ζ) e ativa cascatas que levam à fagocitose e à produção de microbicidas (ROS, NO).</li>
+                </ul>
+                <div class="image-placeholder">
+                    <img src="assets/efetores/figura2_v2.jpg" alt="Opsonização e fagocitose mediada por anticorpos">
+                    <p><strong>Figura 2:</strong> Opsonização e fagocitose mediada por anticorpos.</p>
+                </div>
+                <div class="citation-note"><strong>Observação:</strong> Opsonização é o processo de cobrir partículas, e substâncias (como IgG e C3b) que realizam essa função são chamadas <strong>opsoninas</strong>.</div>
+
+                <h3>3. Citotoxicidade Mediada por Células Dependente de Anticorpo (ADCC)</h3>
+                <p>É o processo pelo qual <strong>Células Natural Killer (NK)</strong> e outros leucócitos destroem células revestidas por anticorpo.</p>
+                <ul>
+                    <li>As células NK utilizam o receptor <strong>FcγRIIIA (CD16)</strong> para se ligar às moléculas de IgG agregadas na superfície da célula-alvo.</li>
+                    <li>A ligação do FcγRIIIA ativa a célula NK para liberar o conteúdo de seus grânulos (perforina e granzimas), <span class="tooltip-trigger" data-tooltip="adcc-morte">induzindo a morte apoptótica</span> da célula revestida por anticorpo.</li>
+                </ul>
+                <div class="image-placeholder">
+                    <img src="assets/efetores/figura3.jpg" alt="Mecanismo de Citotoxicidade Celular Dependente de Anticorpo (ADCC)">
+                    <p><strong>Figura 3:</strong> Mecanismo de Citotoxicidade Celular Dependente de Anticorpo (ADCC).</p>
+                </div>
+                
+                <h3>4. Eliminação de Helmintos</h3>
+                <p>Helmintos são grandes demais para fagocitose. O combate é mediado por <strong>IgE</strong> e <strong>eosinófilos</strong>.</p>
+                <ul>
+                    <li>Anticorpos IgE revestem o parasita e se ligam ao receptor de alta afinidade <span class="complement-trigger" data-tooltip="FceRI">FcεRI</span> em eosinófilos e mastócitos.</li>
+                    <li>A ligação induz a desgranulação do eosinófilo, liberando a <strong>proteína básica principal</strong> (major basic protein, tóxica), que mata o parasita.</li>
+                </ul>
+                <div class="image-placeholder">
+                    <img src="assets/efetores/figura4.jpg" alt="Eliminação de Helmintos mediada por IgE e Eosinófilos">
+                    <p><strong>Figura 4:</strong> Eliminação de Helmintos mediada por IgE e Eosinófilos.</p>
+                </div>
+            </section>
+
+            <section id="sistema-complemento">
+                <h2>Sistema Complemento</h2>
+                <p>O sistema complemento é uma cascata proteolítica de zimógenos (proteínas plasmáticas inativas) que complementa a função lítica dos anticorpos. Sua ativação é limitada a superfícies microbianas ou a complexos antígeno-anticorpo para evitar danos ao hospedeiro.</p>
+                
+                <details>
+                    <summary>As 4 Características Essenciais da Ativação do Complemento</summary>
+                    <p>1. Ativado por microrganismos ou por anticorpos ligados a antígenos.</p>
+                    <p>2. Envolve a <strong>proteólise sequencial de zimógenos</strong> (cascata enzimática) que permite enorme amplificação.</p>
+                    <p>3. Produtos de ativação (e.g., C3b) ligam-se <strong>covalentemente</strong> a superfícies microbianas ou a imunocomplexos, garantindo a localização da reação.</p>
+                    <p>4. Regulação é feita por <strong>proteínas reguladoras do hospedeiro</strong> (ausentes em microrganismos) que inibem a cascata nas células normais.</p>
+                </details>
+
+                <h3>Vias de Ativação (Etapas Iniciais)</h3>
+                <p>Todas as três vias convergem para a formação da <strong>C3-convertase</strong>, que cliva C3 e inicia as funções efetoras.</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Via</th>
+                            <th>Iniciação (Reconhecimento)</th>
+                            <th>C3-Convertase</th>
+                            <th>Principal Ativação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="complement-trigger" data-tooltip="via-classica">Clássica</span></td>
+                            <td>Ligação do <strong>C1</strong> (C1q, C1r, C1s) a regiões Fc de <strong>IgM</strong> ou <strong>IgG</strong> (IgG1, IgG3) ligadas ao antígeno.</td>
+                            <td>C4b2a</td>
+                            <td>Imunidade Adaptativa Humoral</td>
+                        </tr>
+                        <tr>
+                            <td><span class="complement-trigger" data-tooltip="via-alternativa">Alternativa</span></td>
+                            <td>Ligação espontânea do <strong>C3b</strong> (gerado por hidrólise de C3) diretamente a superfícies ativadoras (microrganismos).</td>
+                            <td>C3bBb</td>
+                            <td>Imunidade Inata (e Amplificação)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="complement-trigger" data-tooltip="via-lectinas">Lectinas</span></td>
+                            <td>Ligação da <strong>Lectina Ligadora de Manose (MBL)</strong> ou <strong>Ficolinas</strong> a polissacarídios microbianos (manose, N-acetilglicosamina).</td>
+                            <td>C4b2a</td>
+                            <td>Imunidade Inata</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="image-placeholder">
+                    <img src="assets/efetores/figura5.jpg" alt="Vias de ativação do complemento">
+                    <p><strong>Figura 5:</strong> Vias de ativação do complemento.</p>
+                </div>
+
+                <h3>Etapas Finais e Funções Efetoras</h3>
+                <p>Após a clivagem de C3, o <strong>C3b</strong> recém-gerado se liga à C3-convertase, formando a <strong>C5-convertase</strong> (<span class="complement-trigger" data-tooltip="C5-convertase">C4b2a3b ou C3bBbC3b</span>).</p>
+                <ul>
+                    <li>A C5-convertase cliva C5 em <strong>C5a</strong> (liberado) e <strong>C5b</strong> (ligado à célula).</li>
+                    <li><strong>C5b</strong> inicia a montagem da via terminal (C6, C7, C8, C9), culminando na formação do <strong>Complexo de Ataque à Membrana (MAC)</strong>.</li>
+                </ul>
+                
+                <h4>Mecanismos de Ação do Complemento</h4>
+                <ol>
+                    <li><strong>Opsonização e Fagocitose:</strong> <strong>C3b</strong> e <strong>iC3b</strong> atuam como opsoninas. Eles se ligam a microrganismos e são reconhecidos por receptores nos fagócitos (CR1, CR3/Mac-1, CR4), promovendo a eliminação fagocitária.</li>
+                    <li><strong>Lise Celular:</strong> O <strong>MAC</strong> (poli-C9) forma poros de ~100 Å na membrana, resultando em influxo osmótico de água e lise celular. A lise é crucial principalmente para bactérias com paredes celulares delgadas, como <span class="complement-trigger" data-tooltip="Neisseria">Neisseria</span>.</li>
+                    <li><strong>Estímulo da Inflamação:</strong> Os fragmentos <strong>C5a, C3a</strong> e, em menor grau, C4a, são <span class="complement-trigger" data-tooltip="anafilatoxinas">anafilatoxinas</span>. Eles ativam mastócitos (desgranulação e liberação de histamina), neutrófilos (aumentando motilidade, adesão e explosão respiratória) e células endoteliais.</li>
+                    <li><strong>Aumento da Imunidade Humoral:</strong> C3d liga-se ao <strong>CR2</strong> (<span class="complement-trigger" data-tooltip="CR2">CD21</span>) em células B, formando um correceptor que amplifica a sinalização do BCR, facilitando a ativação de células B e a produção de anticorpos.</li>
+                </ol>
+                <div class="image-placeholder">
+                    <img src="assets/efetores/figura6.png" alt="Via terminal e formação do MAC">
+                    <p><strong>Figura 6:</strong> Via terminal e formação do MAC.</p>
+                </div>
+            </section>
+
+            <section id="regulacao-complemento">
+                <h2>Regulação e Evasão do Complemento</h2>
+                <p>A ativação é rigidamente controlada por proteínas reguladoras para proteger as células do hospedeiro, mas os microrganismos evoluíram mecanismos de evasão.</p>
+                
+                <h3>Reguladores do Hospedeiro</h3>
+                <p>As proteínas reguladoras previnem a formação de C3-convertase, desestabilizam convertases ativas e inibem a formação do MAC.</p>
+                <ul>
+                    <li><span class="complement-trigger" data-tooltip="C1INH"><strong>Inibidor de C1 (C1-INH)</strong></span><strong>:</strong> Proteína plasmática que <strong>dissocia</strong> C1r₂s₂ de C1q, impedindo a ativação da Via Clássica. (Deficiência causa Angioedema Hereditário).</li>
+                    <li><strong>Fator de Aceleração do Decaimento (DAF/CD55):</strong> Proteína de membrana que <strong>dissocia</strong> C2a de C4b e Bb de C3b, desestabilizando as C3-convertases.</li>
+                    <li><strong>Proteína Cofatora de Membrana (MCP/CD46) e Fator H:</strong> Atuam como <strong>cofatores</strong> para a protease Fator I. O Fator I cliva C3b e C4b em formas inativas (iC3b), <strong>degradando as convertases</strong>. O Fator H regula a Via Alternativa.</li>
+                    <li><strong>CD59:</strong> Proteína de membrana que se insere no complexo C5b-8, <strong>bloqueando a polimerização de C9</strong> e, assim, a formação do MAC.</li>
+                </ul>
+                
+                <h3>Evasão Microbiana</h3>
+                <p>Microrganismos evoluíram estratégias para se protegerem da lise e opsonização.</p>
+                <ul>
+                    <li><strong>Recrutamento de Reguladores do Hospedeiro:</strong> Patógenos (e.g., <em>Neisseria, Schistosoma</em>) expressam ácido siálico ou produzem proteínas que recrutam o <strong>Fator H</strong> do hospedeiro para suas superfícies, inibindo a Via Alternativa. O HIV, por exemplo, incorpora DAF e CD59.</li>
+                    <li><strong>Produção de Miméticos Regulatórios:</strong> Bactérias (<em>S. aureus</em>) ou vírus (<em>vírus vaccínia</em>) produzem proteínas que imitam ou inibem componentes do complemento, como o SCIN (<em>S. aureus</em>), que inibe as C3-convertases.</li>
+                    <li><strong>Paredes Celulares Espessas:</strong> Impedem o acesso do MAC à membrana.</li>
+                </ul>
+            </section>
+            
+            <section id="deficiencias-patologia">
+                <h2>Deficiências e Patologia do Complemento</h2>
+                <p>Deficiências genéticas no complemento causam suscetibilidade a infecções e autoimunidade.</p>
+                <ul>
+                    <li><strong>Deficiências em C1, C2, C4 (Via Clássica):</strong> Fortemente associadas ao <span class="complement-trigger" data-tooltip="LES">Lúpus Eritematoso Sistêmico (LES)</span>, possivelmente devido à falha na eliminação de imunocomplexos e corpos apoptóticos.</li>
+                    <li><strong>Deficiência em C3:</strong> Causa suscetibilidade grave a <strong>infecções bacterianas piogênicas</strong> (frequentes e letais), ilustrando o papel central de C3 na opsonização.</li>
+                    <li><strong>Deficiência na Via Terminal (C5-C9):</strong> Associada a uma propensão específica a infecções disseminadas por <strong>bactérias <em>Neisseria</em></strong> (meningococo, gonococo), sublinhando a importância do MAC contra estes patógenos de parede celular fina.</li>
+                </ul>
+            </section>
+            
+            <section id="imunidade-neonatal">
+                <h2>Imunidade Neonatal</h2>
+                <p>Neonatos obtêm proteção passiva da mãe.</p>
+                <ul>
+                    <li>A <strong>IgG materna</strong> é transportada através da placenta para a circulação fetal.</li>
+                    <li>O transporte de IgG (e sua proteção contra o catabolismo em adultos) é mediado pelo <strong>Receptor Fc Neonatal (FcRn)</strong>. O FcRn é estruturalmente semelhante a uma molécula de MHC de Classe I, mas não apresenta peptídeos.</li>
+                </ul>
+            </section>
+
+        </div>
+    </div>
+    
+    <!-- Modal for Tooltips -->
+    <div id="infoModal" class="efetores-modal">
+        <div class="efetores-modal-content">
+            <span class="close-btn" onclick="window.closeModal()">&times;</span>
+            <h3 id="modalTitle" style="color: var(--color-complement);"></h3>
+            <p id="modalText"></p>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    (function() {
+        // --------------------------------------------------------
+        // Script de Interatividade (TOC e Tooltips)
+        // --------------------------------------------------------
+        
+        // 1. Definição e Merge dos Tooltips
+        window.tooltips = window.tooltips || {};
+        Object.assign(window.tooltips, {
+            'imunidade-humoral': {
+                title: 'Imunidade Humoral',
+                text: 'Tipo de imunidade adaptativa mediada por anticorpos produzidos por linfócitos B. É a principal defesa contra microrganismos extracelulares e suas toxinas.'
+            },
+            'neutralizacao': {
+                title: 'Neutralização',
+                text: 'Processo pelo qual anticorpos se ligam a microrganismos ou toxinas, bloqueando sua capacidade de infectar células ou causar danos. É a única função mediada exclusivamente pela região Fab.'
+            },
+            'bloqueio-ligacao': {
+                title: 'Bloqueio de Ligação',
+                text: 'Anticorpos impedem a interação de moléculas de superfície do patógeno com receptores celulares, prevenindo a entrada do microrganismo na célula.'
+            },
+            'bloqueio-toxina': {
+                title: 'Neutralização de Toxinas',
+                text: 'Anticorpos impedem que toxinas (como a tetânica ou diftérica) se liguem aos seus receptores nas células-alvo, inibindo seus efeitos tóxicos.'
+            },
+            'FcyRI': {
+                title: 'FcγRI (CD64)',
+                text: 'Receptor de alta afinidade para IgG (especialmente IgG1 e IgG3) presente em macrófagos e neutrófilos. Essencial para a fagocitose de partículas opsonizadas.'
+            },
+            'ITIM': {
+                title: 'ITIM (Motivo de Inibição Baseado em Tirosina)',
+                text: 'Sequência de aminoácidos na cauda citoplasmática de receptores inibitórios (como FcγRIIB). Quando fosforilado, recruta fosfatases que inibem vias de sinalização de ativação.'
+            },
+            'ITAM': {
+                title: 'ITAM (Motivo de Ativação Baseado em Tirosina)',
+                text: 'Sequência encontrada em cadeias de sinalização de receptores ativadores. Sua fosforilação recruta quinases que iniciam a cascata de ativação celular.'
+            },
+            'adcc-morte': {
+                title: 'Morte por ADCC',
+                text: 'A célula NK libera grânulos contendo perforina e granzimas. A perforina facilita a entrada das granzimas, que ativam caspases na célula-alvo, levando à apoptose.'
+            },
+            'FceRI': {
+                title: 'FcεRI',
+                text: 'Receptor de alta afinidade para IgE, expresso em mastócitos, basófilos e eosinófilos. Sua ligação cruzada por antígenos multvalentes induz desgranulação potente.'
+            },
+            'via-classica': {
+                title: 'Via Clássica',
+                text: 'Iniciada pela ligação do complexo C1 (C1q) a anticorpos (IgM ou IgG) ligados à superfície do patógeno. Conecta a imunidade adaptativa ao sistema complemento.'
+            },
+            'via-alternativa': {
+                title: 'Via Alternativa',
+                text: 'Ativada pela hidrólise espontânea de C3 e estabilização de C3b na superfície microbiana. É um mecanismo de vigilância inata constante.'
+            },
+            'via-lectinas': {
+                title: 'Via das Lectinas',
+                text: 'Iniciada pela ligação de MBL ou ficolinas a carboidratos na superfície de patógenos. Semelhante à via clássica, mas independente de anticorpos.'
+            },
+            'C5-convertase': {
+                title: 'C5-convertase',
+                text: 'Complexo enzimático (C4b2a3b ou C3bBbC3b) que cliva C5, iniciando a etapa final da ativação do complemento (formação do MAC e anafilatoxinas potentes).'
+            },
+            'Neisseria': {
+                title: 'Neisseria spp.',
+                text: 'Gênero de bactérias (inclui meningococo e gonococo) com parede celular fina, sendo particularmente suscetíveis à lise pelo MAC. Deficiências nos componentes terminais do complemento aumentam o risco de infecções disseminadas por Neisseria.'
+            },
+            'anafilatoxinas': {
+                title: 'Anafilatoxinas (C5a, C3a)',
+                text: 'Fragmentos pequenos da clivagem do complemento que induzem inflamação aguda: recrutam leucócitos (quimiotaxia), aumentam a permeabilidade vascular e ativam mastócitos.'
+            },
+            'CR2': {
+                title: 'CR2 (CD21)',
+                text: 'Receptor para C3d presente em células B. Atua como parte do complexo correceptor da célula B, reduzindo o limiar de ativação necessário para a resposta de anticorpos.'
+            },
+            'C1INH': {
+                title: 'Inibidor de C1 (C1-INH)',
+                text: 'Proteína reguladora que inibe a atividade proteolítica de C1r e C1s (Via Clássica) e MASPs (Via das Lectinas), prevenindo ativação excessiva ou espontânea.'
+            },
+            'LES': {
+                title: 'Lúpus Eritematoso Sistêmico (LES)',
+                text: 'Doença autoimune complexa. A deficiência de componentes iniciais do complemento (C1, C4, C2) predispõe ao LES, provavelmente devido à falha na eliminação silenciosa de células apoptóticas e imunocomplexos, gerando autoantígenos.'
+            }
+        });
+
+        // 2. Geração do Índice de Conteúdo (TOC)
+        const content = document.querySelector('.efetores-content');
+        const tocList = document.getElementById('toc-list-efetores');
+
+        if (content && tocList) {
+            tocList.innerHTML = '';
+            const sections = content.querySelectorAll('section');
+
+            sections.forEach(section => {
+                const h2 = section.querySelector('h2');
+                if (!h2) return;
+                const sectionTitle = h2.textContent;
+                const sectionId = section.id;
+
+                let listItem = document.createElement('li');
+                let link = document.createElement('a');
+                link.href = '#' + sectionId;
+                link.textContent = sectionTitle;
+                listItem.appendChild(link);
+
+                // Adiciona links de subseções (h3)
+                const subHeadings = section.querySelectorAll('h3');
+                if (subHeadings.length > 0) {
+                    let subList = document.createElement('ul');
+                    subHeadings.forEach(sub => {
+                        let subListItem = document.createElement('li');
+                        let subLink = document.createElement('a');
+                        
+                        // Cria um ID se não existir (necessário para sub-links)
+                        let subId = sub.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                        sub.id = subId;
+                        
+                        subLink.href = '#' + subId;
+                        subLink.textContent = sub.textContent;
+                        subLink.classList.add('sub-link');
+                        subListItem.appendChild(subLink);
+                        subList.appendChild(subListItem);
+                    });
+                    listItem.appendChild(subList);
+                }
+                tocList.appendChild(listItem);
+            });
+
+            // Adiciona listener para rolar suavemente ao clicar nos links do TOC
+            tocList.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    e.preventDefault();
+                    const href = e.target.getAttribute('href');
+                    if (!href) return;
+                    const targetId = href.substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        window.toggleEfetoresMenu();
+                    }
+                }
+            });
+        }
+
+        // 3. Menu Toggle Logic
+        window.toggleEfetoresMenu = function() {
+            const dropdown = document.getElementById('efetores-toc-dropdown');
+            if (dropdown) dropdown.classList.toggle('active');
+        }
+
+        // Close menu when clicking outside
+        window.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('efetores-toc-dropdown');
+            const btn = document.querySelector('.efetores-menu-btn');
+            if (dropdown && btn && !dropdown.contains(e.target) && !btn.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+    })();
+</script>
+        `,
+        midia: {
+            audio: null,
+            video: null,
+            infographics: null
+        },
+        flashcards: [],
+        quiz: {
+            basico: [],
+            avancado: []
+        },
+        abertas: []
+    },
+    "moleculas_mhc": {
+        titulo: "Moléculas do MHC e apresentação de antígenos para linfócitos T",
+        resumo: `
+<style>
+    /* CSS Scoped for Report */
+    .efetores-wrapper {
+        --color-primary: #2c7a7b; /* Verde Petróleo Profundo - tema científico */
+        --color-secondary: #546e7a; /* Azul Acinzentado */
+        --color-background: #f0f4f8; /* Fundo cinza azulado muito claro */
+        --color-text: #2d3748; /* Cinza escuro para texto */
+        --color-highlight: #e2e8f0;
+        --color-complement: #2b6cb0; /* Azul Real para destaques secundários */
+        --color-warning: #c05621; /* Laranja queimado para notas importantes */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--color-background);
+        color: var(--color-text);
+        line-height: 1.7;
+        padding: 0;
+        margin: 0;
+    }
+
+    .efetores-container {
+        display: block;
+        max-width: 1024px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Floating Menu Button */
+    .efetores-menu-btn {
+        position: fixed;
+        top: 85px;
+        left: 20px;
+        z-index: 2000;
+        background-color: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s, background-color 0.2s;
+    }
+    .efetores-menu-btn:hover {
+        transform: scale(1.1);
+        background-color: var(--color-complement);
+    }
+
+    /* Menu Dropdown */
+    .efetores-toc-dropdown {
+        position: fixed;
+        top: 145px;
+        left: 20px;
+        width: 300px;
+        max-height: 65vh;
+        overflow-y: auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        padding: 20px;
+        z-index: 2000;
+        display: none;
+        border: 1px solid rgba(0,0,0,0.05);
+        animation: fadeIn 0.2s ease-out;
+    }
+    .efetores-toc-dropdown.active {
+        display: block;
+    }
+    
+    .efetores-toc-dropdown h3 {
+        margin-top: 0;
+        color: var(--color-primary);
+        font-size: 1.2rem;
+        border-bottom: 2px solid var(--color-highlight);
+        padding-bottom: 10px;
+    }
+
+    .efetores-toc-dropdown ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .efetores-toc-dropdown li {
+        margin-bottom: 5px;
+    }
+
+    .efetores-toc-dropdown a {
+        text-decoration: none;
+        color: var(--color-text);
+        display: block;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        transition: all 0.2s;
+    }
+
+    .efetores-toc-dropdown a:hover {
+        background-color: var(--color-highlight);
+        color: var(--color-primary);
+        font-weight: 600;
+    }
+    
+    .efetores-toc-dropdown a.sub-link {
+        padding-left: 24px;
+        font-size: 0.85em;
+        color: var(--color-secondary);
+        border-left: 2px solid transparent;
+    }
+    .efetores-toc-dropdown a.sub-link:hover {
+        border-left: 2px solid var(--color-primary);
+    }
+
+    /* Content Styling */
+    .efetores-content {
+        background-color: #fff;
+        padding: 50px;
+        border-radius: 12px;
+        box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .efetores-content header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .efetores-content h1 {
+        color: var(--color-primary);
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+
+    .efetores-content .intro-text {
+        font-size: 1.2rem;
+        color: var(--color-secondary);
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .efetores-content h2 {
+        margin-top: 60px;
+        border-bottom: 2px solid var(--color-highlight);
+        padding-bottom: 15px;
+        color: var(--color-primary); 
+        font-size: 1.8rem;
+    }
+    
+    .efetores-content h3 {
+        margin-top: 40px;
+        color: var(--color-complement);
+        border-left: 4px solid var(--color-complement);
+        padding-left: 15px;
+        font-size: 1.4rem;
+    }
+    
+    .efetores-content h4 {
+        margin-top: 30px;
+        color: var(--color-text);
+        font-weight: 700;
+        font-size: 1.15rem;
+    }
+
+    .efetores-content p {
+        margin-bottom: 18px;
+        text-align: justify;
+        font-size: 1.05rem;
+    }
+    
+    .efetores-content ul, .efetores-content ol {
+        margin-bottom: 25px;
+        padding-left: 30px;
+        color: var(--color-text);
+    }
+    
+    .efetores-content li {
+        margin-bottom: 10px;
+    }
+
+    /* Tooltip/Item Clicável */
+    .tooltip-trigger, .complement-trigger {
+        color: var(--color-primary);
+        cursor: pointer;
+        border-bottom: 1px dashed var(--color-primary);
+        position: relative;
+        font-weight: 600;
+        transition: all 0.2s;
+        background-color: rgba(44, 122, 123, 0.05);
+        padding: 0 4px;
+        border-radius: 4px;
+    }
+
+    .complement-trigger {
+        color: var(--color-complement);
+        border-bottom: 1px dashed var(--color-complement);
+        background-color: rgba(43, 108, 176, 0.05);
+    }
+
+    .tooltip-trigger:hover, .complement-trigger:hover {
+        background-color: var(--color-highlight);
+        border-bottom-style: solid;
+    }
+
+    /* Caixas de Informação/Quadros Explicativos (<details>) */
+    .efetores-content details {
+        margin: 30px 0;
+        padding: 0;
+        border: 1px solid var(--color-highlight);
+        border-left: 6px solid var(--color-warning);
+        background-color: #fffaf0;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .efetores-content details[open] {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .efetores-content summary {
+        padding: 15px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #9c4221;
+        font-size: 1.05rem;
+        background-color: rgba(255, 250, 240, 0.5);
+        display: flex;
+        align-items: center;
+    }
+    
+    .efetores-content summary:hover {
+        background-color: rgba(255, 250, 240, 1);
+    }
+    
+    .efetores-content details .details-content {
+        padding: 20px;
+        border-top: 1px solid rgba(0,0,0,0.05);
+        color: #4a5568;
+    }
+
+    /* Tabelas */
+    .table-container {
+        overflow-x: auto;
+        margin: 30px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .efetores-content table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95em;
+        background-color: white;
+    }
+
+    .efetores-content th, .efetores-content td {
+        border: 1px solid var(--color-highlight);
+        padding: 16px;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    .efetores-content th {
+        background-color: var(--color-primary);
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .efetores-content tr:nth-child(even) {
+        background-color: #f8fafc;
+    }
+    
+    .efetores-content tr:hover {
+        background-color: #e6fffa;
+    }
+    
+    /* Destaque para Citações/Observações */
+    .citation-note {
+        font-style: italic;
+        font-size: 0.95em;
+        color: var(--color-secondary);
+        margin: 25px 0;
+        display: block;
+        background: #edf2f7;
+        padding: 15px 20px;
+        border-radius: 0 8px 8px 0;
+        border-left: 4px solid var(--color-secondary);
+    }
+
+    /* Tags de Imagem */
+    .image-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 40px auto;
+        padding: 25px;
+        background-color: #ffffff;
+        border: 2px dashed #cbd5e0;
+        border-radius: 12px;
+        text-align: center;
+        color: var(--color-secondary);
+        transition: all 0.3s;
+    }
+    
+    .image-placeholder:hover {
+        border-color: var(--color-primary);
+        background-color: #f0fff4;
+    }
+    
+    .image-placeholder .icon {
+        font-size: 40px;
+        margin-bottom: 15px;
+        color: var(--color-primary);
+    }
+
+    .image-placeholder p {
+        font-size: 0.95rem;
+        margin-bottom: 5px;
+        color: #4a5568;
+        font-style: italic;
+    }
+    
+    .image-caption {
+        margin-top: 10px;
+        font-weight: bold;
+        color: var(--color-text);
+        font-size: 0.9rem;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Modal Styles */
+    .efetores-modal {
+        display: none; 
+        position: fixed; 
+        z-index: 3000; 
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto; 
+        background-color: rgba(0,0,0,0.6); 
+        backdrop-filter: blur(3px);
+    }
+
+    .efetores-modal-content {
+        background-color: #fff;
+        margin: 10% auto; 
+        padding: 30px;
+        border: 1px solid #ddd;
+        width: 90%; 
+        max-width: 600px;
+        border-radius: 12px;
+        position: relative;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from { transform: translateY(-30px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .close-btn {
+        color: #aaa;
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 28px;
+        font-weight: bold;
+        line-height: 1;
+        transition: color 0.2s;
+    }
+
+    .close-btn:hover,
+    .close-btn:focus {
+        color: var(--color-primary);
+        text-decoration: none;
+        cursor: pointer;
+    }
+    
+    #modalTitle {
+        margin-top: 0;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+</style>
+<div class="efetores-wrapper">
+    <!-- Floating Menu Button -->
+    <button class="efetores-menu-btn" onclick="window.toggleEfetoresMenu()" title="Índice">
+        ☰
+    </button>
+
+    <!-- Dropdown Menu -->
+    <div id="efetores-toc-dropdown" class="efetores-toc-dropdown">
+        <h3>Índice</h3>
+        <ul id="toc-list-efetores">
+            <!-- TOC generated by JS -->
+        </ul>
+    </div>
+
+    <div class="efetores-container">
+        <div class="efetores-content">
+            <header>
+                <h1>O Complexo Principal de Histocompatibilidade (MHC) e o Processamento de Antígenos</h1>
+
+                
+
+            </header>
+            
+            <section id="introducao">
+                <h2>1. Introdução e Princípios de Reconhecimento</h2>
+                <p>Ao contrário dos linfócitos B, que podem reconhecer antígenos em sua conformação nativa (solúveis ou na superfície de microrganismos), os <strong>linfócitos T</strong> possuem um mecanismo de reconhecimento altamente restritivo. Eles evoluíram para detectar apenas fragmentos de antígenos proteicos que estão "exibidos" na superfície de células hospedeiras.</p>
+                
+                <div class="citation-note">
+                    <strong>Conceito Fundamental:</strong> A função do MHC é apresentar peptídios para as células T. Isso garante que as células T interajam com outras células (células infectadas, macrófagos, células dendríticas) e não com antígenos livres na circulação.
+                </p>
+                <div class="image-placeholder">
+                    <img src="MHC_funcao.jpg" alt="Função do MHC na apresentação de antígenos" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div class="image-caption">Figura 1: A função do MHC é apresentar peptídios para as células T. Isso garante que as células T interajam com outras células (células infectadas, macrófagos, células dendríticas) e não com antígenos livres na circulação.</div>
+                </div>
+                </div>
+
+                <h3>Propriedades dos Antígenos Reconhecidos por Células T</h3>
+                <p>O reconhecimento de antígenos pelas células T possui características únicas:</p>
+                <ul>
+                    <li><strong>Restrição a Peptídeos:</strong> A vasta maioria das células T reconhece apenas pequenos <span class="tooltip-trigger" data-tooltip="peptidio">peptídeos lineares</span>, e não proteínas inteiras ou outras macromoléculas (exceto um pequeno grupo de células T que reconhece lipídios via CD1).</li>
+                    <li><strong>Associação Celular:</strong> As células T não reconhecem antígenos solúveis. Elas requerem que o antígeno seja processado e exibido por moléculas especializadas de membrana chamadas <strong>MHC</strong> (Complexo Principal de Histocompatibilidade).</li>
+                    <li><strong>Restrição pelo MHC:</strong> Uma célula T específica reconhece um antígeno estranho <em>apenas</em> quando este é apresentado por uma molécula do MHC do próprio indivíduo (self-MHC). Esse fenômeno é chamado de <span class="tooltip-trigger" data-tooltip="restricao-mhc">Restrição pelo MHC</span>.</li>
+                </ul>
+            </section>
+
+            <section id="apcs">
+                <h2>2. Células Apresentadoras de Antígenos (APCs)</h2>
+                <p>A captura e apresentação de antígenos é realizada por células especializadas. Embora todas as células nucleadas possam apresentar antígenos via MHC Classe I (para CD8+), apenas um grupo seleto, denominado <span class="tooltip-trigger" data-tooltip="apc-profissional">APCs Profissionais</span>, expressa MHC Classe II e co-estimuladores para ativar células T auxiliares (CD4+).</p>
+
+                <h3>O Papel Central das Células Dendríticas (DCs)</h3>
+                <p>As <strong>Células Dendríticas</strong> são as sentinelas mais eficazes do sistema imune. Localizadas estrategicamente em barreiras epiteliais (pele, mucosa intestinal), elas capturam antígenos e migram para os linfonodos.</p>
+                
+                <details>
+                    <summary>Ciclo de Maturação da Célula Dendrítica (Clique para expandir)</summary>
+                    <div class="details-content">
+                        <p><strong>1. Estado Imaturo:</strong> Nos tecidos periféricos, as DCs são altamente fagocíticas, mas expressam baixos níveis de MHC e co-estimuladores. Seu foco é a <em>captura</em>.</p>
+                        <p><strong>2. Ativação:</strong> Ao detectar sinais de perigo (PAMPs) via receptores Toll-like (TLR), a DC é ativada. Ela perde a adesividade ao tecido e começa a migrar via vasos linfáticos.</p>
+                        <p><strong>3. Estado Maduro:</strong> Ao chegar no linfonodo, a DC deixa de fagocitar e aumenta drasticamente a expressão de MHC carregado com peptídios e moléculas co-estimuladoras (B7). Ela se torna uma potente ativadora de <span class="complement-trigger" data-tooltip="celula-t-naive">células T Naïve</span>.</p>
+                    </div>
+                </details>
+
+                <div class="image-placeholder">
+                    <img src="MHC_maturacao.jpg" alt="Ciclo de Maturação da Célula Dendrítica" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div class="image-caption">Figura 2: A maturação da célula dendrítica envolve mudanças morfológicas (aumento de dendritos) e moleculares (aumento de MHC e B7).</div>
+                </div>
+
+                <h3>Comparação das Principais APCs</h3>
+                <div class="image-placeholder">
+                    <img src="MHC_APCs.jpg" alt="Principais Células Apresentadoras de Antígenos (APCs)" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div class="image-caption">Figura 3: Principais Células Apresentadoras de Antígenos (APCs): Célula Dendrítica, Macrófago e Célula B, destacando suas funções na captura e apresentação de antígenos.</div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tipo Celular</th>
+                                <th>Expressão de MHC II</th>
+                                <th>Expressão de Co-estimuladores</th>
+                                <th>Função Principal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Células Dendríticas</strong></td>
+                                <td>Constitutiva; aumenta com a maturação e IFN-γ.</td>
+                                <td>Constitutiva em células maduras; induzível por TLRs/citocinas.</td>
+                                <td>Iniciação de respostas primárias de células T (ativação de células naïve).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Macrófagos</strong></td>
+                                <td>Baixa ou negativa; induzível por IFN-γ.</td>
+                                <td>Induzível por LPS, IFN-γ e CD40L.</td>
+                                <td>Fase efetora da imunidade celular (ativação de células T CD4+ para matar microrganismos intravesiculares).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Linfócitos B</strong></td>
+                                <td>Constitutiva; aumenta por IL-4.</td>
+                                <td>Induzível por células T (CD40-CD40L) e cross-linking do BCR.</td>
+                                <td>Apresentação de antígenos proteicos para células T auxiliares na imunidade humoral (produção de anticorpos).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="estrutura-mhc">
+                <h2>3. O Complexo Principal de Histocompatibilidade (MHC)</h2>
+                <p>O <strong>MHC</strong> é uma região gênica altamente polimórfica. Em humanos, é chamado de <strong>HLA</strong> (Antígeno Leucocitário Humano). Seus genes codificam duas classes principais de moléculas estruturalmente distintas, mas homólogas: <strong>Classe I</strong> e <strong>Classe II</strong>.</p>
+
+                <h3>Estrutura e Função das Moléculas do MHC</h3>
+                
+                <h4>MHC de Classe I</h4>
+                <p>Expressas em <strong>todas as células nucleadas</strong>. Apresentam peptídios citosólicos para células T <strong>CD8+</strong> (Citotóxicas).</p>
+                <ul>
+                    <li>Composta por uma cadeia pesada <strong>α</strong> (polimórfica) e uma cadeia leve não-polimórfica chamada <strong>β2-microglobulina</strong>.</li>
+                    <li>A fenda de ligação do peptídio é formada pelos domínios α1 e α2.</li>
+                    <li>A fenda é <strong>fechada</strong> nas extremidades, acomodando peptídios curtos (8-11 aminoácidos).</li>
+                </ul>
+                <div class="image-placeholder">
+                    <img src="MHC_Classe_I_nova.png" alt="Estrutura e Apresentação de Peptídeo pela Molécula de MHC Classe I" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div class="image-caption">Figura 4: Estrutura de uma molécula de MHC de classe I. Diagrama esquemático (esquerda) ilustrando as diferentes regiões da molécula de MHC (omitido na escala). As moléculas de classe I são compostas por uma cadeia α polimórfica ligada de modo não covalente à β2-microglobulina (β2m) não polimórfica. A cadeia α é glicosilada; os resíduos de carboidrato foram omitidos. O diagrama de fitas (direita) mostra a estrutura da porção extracelular da molécula HLA-B27 com um peptídeo ligado, resolvida por cristalografia de raios X.</div>
+                </div>
+
+                <h4>MHC de Classe II</h4>
+                <p>Expressas principalmente em <strong>APCs profissionais</strong>. Apresentam peptídios extracelulares (vesiculares) para células T <strong>CD4+</strong> (Auxiliares).</p>
+                <ul>
+                    <li>Composta por duas cadeias polimórficas: cadeia <strong>α</strong> e cadeia <strong>β</strong>.</li>
+                    <li>A fenda de ligação é formada pelos domínios α1 e β1.</li>
+                    <li>A fenda é <strong>aberta</strong> nas extremidades, acomodando peptídios maiores (10-30 aminoácidos ou mais).</li>
+                </ul>
+
+                <div class="image-placeholder">
+                    <img src="MHC_Classe_II_nova.png" alt="Estrutura e Apresentação de Peptídeo pela Molécula de MHC Classe II" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div class="image-caption">Figura 5: Estrutura de uma molécula de MHC de classe II. Diagrama esquemático (esquerda) ilustrando as diferentes regiões da molécula de MHC (omitido na escala). As moléculas de classe II são compostas por uma cadeia α polimórfica ligada de forma não covalente a uma cadeia β. Ambas as cadeias são glicosiladas; os resíduos de carboidrato foram omitidos. O diagrama de fitas (direita) mostra a estrutura da porção extracelular da molécula de HLA-DR1 com um peptídeo ligado, resolvida por cristalografia de raios X.</div>
+                </div>
+
+                <details>
+                    <summary>Curiosidade: O Polimorfismo do MHC</summary>
+                    <div class="details-content">
+                        <p>Os polimorfismos de MHC (Complexo Principal de Histocompatibilidade) referem-se à extraordinária variedade genética encontrada nos genes que codificam as moléculas de MHC (chamadas de HLA em humanos).</p>
+                        
+                        <p><strong>Para simplificar:</strong> imagine que o MHC é uma "mão" molecular que segura pedaços de invasores (bactérias, vírus) para mostrar ao sistema imune. O polimorfismo significa que existem milhares de formatos diferentes dessa "mão" na população humana.</p>
+
+                        <h4>1. O que são exatamente?</h4>
+                        <p>Em termos genéticos, o MHC é a região mais polimórfica do genoma humano. Isso significa que, para cada gene do MHC (como o HLA-A, HLA-B ou HLA-DR), existem milhares de variantes (alelos) diferentes espalhadas pela população.</p>
+                        <ul>
+                            <li><strong>Variação na Fenda:</strong> A maior parte dessas diferenças ocorre na "fenda de ligação ao peptídeo" — o local exato onde a molécula segura o antígeno.</li>
+                            <li><strong>Expressão Codominante:</strong> Você herda um conjunto de genes do seu pai e outro da sua mãe, e suas células expressam ambos. Isso aumenta a variedade de "mãos" que você tem para segurar antígenos.</li>
+                        </ul>
+
+                        <h4>2. Por que são importantes?</h4>
+                        <p>A importância pode ser dividida em nível individual, populacional e clínico:</p>
+
+                        <h5>A. Defesa contra Pathógenos (Nível Populacional)</h5>
+                        <p>Esta é a razão evolutiva principal. Como cada variante de MHC consegue segurar apenas certos tipos de peptídeos, se todos nós tivéssemos o mesmo MHC, um único vírus que sofresse uma mutação para não ser "segurado" por esse MHC poderia dizimar a humanidade inteira.</p>
+                        <p><strong>O polimorfismo garante a sobrevivência da espécie:</strong> Mesmo que um vírus escape da defesa de algumas pessoas, outras terão variantes de MHC capazes de reconhecê-lo e combatê-lo.</p>
+
+                        <h5>B. Suscetibilidade a Doenças</h5>
+                        <p>Certos alelos de MHC são melhores em apresentar certos antígenos do que outros.</p>
+                        <ul>
+                            <li><strong>Doenças Infecciosas:</strong> Algumas pessoas, chamadas de "controladores de elite" no HIV, possuem alelos de MHC (como o HLA-B57) que são excepcionalmente bons em apresentar pedaços críticos do vírus, controlando a infecção sem remédios.</li>
+                            <li><strong>Doenças Autoimunes:</strong> Infelizmente, certos alelos podem apresentar "pedaços do próprio corpo" por engano. Por exemplo, portadores do alelo HLA-B27 têm um risco muito maior de desenvolver Espondilite Anquilosante.</li>
+                        </ul>
+
+                        <h5>C. Transplantes</h5>
+                        <p>O polimorfismo é o principal obstáculo na medicina de transplantes.</p>
+                        <p>Como o MHC é tão variável, é estatisticamente muito difícil encontrar duas pessoas (que não sejam gêmeos idênticos) com o mesmo conjunto de MHC. Se o sistema imune do receptor percebe que o MHC do órgão doado é diferente (polimórfico), ele o ataca, causando a rejeição do enxerto.</p>
+
+                        <h4>Resumo Visual</h4>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Característica</th>
+                                        <th>Consequência Prática</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Alta variabilidade genética</td>
+                                        <td>Dificuldade em encontrar doadores de medula/órgãos compatíveis.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Diferenças na fenda de ligação</td>
+                                        <td>Cada pessoa responde de forma única a infecções e vacinas.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Herança de pai e mãe</td>
+                                        <td>Aumenta o repertório de defesa de cada indivíduo.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+            </section>
+
+            <section id="processamento-antigenos">
+                <h2>4. Vias de Processamento e Apresentação de Antígenos</h2>
+                <p>O sistema imune precisa distinguir entre patógenos intracelulares (como vírus no citoplasma) e extracelulares (como bactérias fagocitadas). Para isso, utiliza duas vias segregadas de processamento que direcionam os antígenos para a molécula de MHC correta.</p>
+
+                <h3>Via da Classe I: Antígenos Citossólicos</h3>
+                <p>Esta via processa proteínas que são sintetizadas dentro da célula (endógenas) ou que escapam para o citoplasma.</p>
+                <ol>
+                    <li><strong>Marcação:</strong> Proteínas virais ou defeituosas no citosol são marcadas com ubiquitina.</li>
+                    <li><strong>Degradação:</strong> O <span class="tooltip-trigger" data-tooltip="proteassoma">Proteassoma</span> degrada essas proteínas em peptídios.</li>
+                    <li><strong>Transporte:</strong> Os peptídios são bombeados do citosol para dentro do Retículo Endoplasmático (RE) pela proteína transportadora <span class="complement-trigger" data-tooltip="tap">TAP</span> (Transporter associated with Antigen Processing).</li>
+                    <li><strong>Montagem:</strong> No RE, o MHC Classe I recém-sintetizado recebe o peptídio, com auxílio da Tapasina.</li>
+                    <li><strong>Expressão:</strong> O complexo estável MHC I-Peptídio viaja via Golgi até a superfície celular para ser reconhecido por um linfócito T CD8+.</li>
+                </ol>
+
+                <div class="image-placeholder">
+                    <img src="MHC_Via_Classe_I.png" alt="Via do MHC de classe I de apresentação antigênica" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div class="image-caption"><strong>Figura 6: Via do MHC de classe I de apresentação antigênica.</strong> As etapas do processamento de proteínas citosólicas são descritas no texto. Esta figura representa a proteólise proteassômica de uma proteína sintetizada no interior da célula ou que é ingerida em um fagossomo e então transportada para o citosol. A apresentação de proteínas ingeridas por moléculas do MHC de classe I constitui a base da apresentação cruzada descrita adiante, neste capítulo (Fig. 6.17). ERAP, peptidase associada ao retículo endoplasmático; RE, retículo endoplasmático; β2m, β2-microglobulina; TAP, transportador associado ao processamento antigênico; Ub, ubiquitina.</div>
+                </div>
+
+                <h3>Via da Classe II: Antígenos Vesiculares (Extracelulares)</h3>
+                <p>Esta via processa proteínas capturadas do meio externo por endocitose ou fagocitose.</p>
+                <ol>
+                    <li><strong>Captura:</strong> A APC internaliza o antígeno em um endossomo/fagossomo.</li>
+                    <li><strong>Degradação:</strong> O endossomo se acidifica e funde com lisossomos. Enzimas proteolíticas (Catepsinas) degradam o antígeno em peptídios.</li>
+                    <li><strong>Biossíntese e Proteção:</strong> O MHC Classe II é sintetizado no RE. Para evitar que ele se ligue a peptídios do RE (destinados à Classe I), sua fenda é bloqueada pela <span class="tooltip-trigger" data-tooltip="cadeia-invariante">Cadeia Invariante (Ii)</span>.</li>
+                    <li><strong>Fusão:</strong> A vesícula contendo o MHC II trafega para o citoplasma e funde-se com o endossomo contendo os peptídios antigênicos (formando o compartimento MIIC).</li>
+                    <li><strong>Troca de Peptídios:</strong> Enzimas degradam a Cadeia Invariante, deixando apenas um fragmento chamado <span class="complement-trigger" data-tooltip="clip">CLIP</span> na fenda. Uma molécula chamada <strong>HLA-DM</strong> remove o CLIP e permite a ligação do peptídio antigênico de alta afinidade.</li>
+                    <li><strong>Expressão:</strong> O complexo MHC II-Peptídio é transportado à superfície para ativar células T CD4+.</li>
+                </ol>
+
+                <div class="image-placeholder">
+                    <img src="MHC_Via_Classe_II.png" alt="Via do MHC de classe II de apresentação antigênica" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div class="image-caption"><strong>Figura 7: A via do MHC de classe II de apresentação antigênica.</strong> Os estágios no processamento de antígenos extracelulares são descritos no texto. CLIP, peptídeo de cadeia invariante associado à classe II; RE, retículo endoplasmático; Ii, cadeia invariante.</div>
+                </div>
+            </section>
+
+            <section id="apresentacao-cruzada">
+                <h2>5. Apresentação Cruzada (Cross-Presentation)</h2>
+                <p>Existe uma exceção crucial à regra de segregação das vias. Como uma célula T CD8+ naïve pode ser ativada contra um vírus que infecta células teciduais (ex: hepatócitos), mas não infecta células dendríticas?</p>
+                <p>A resposta é a <strong>Apresentação Cruzada</strong>. Neste processo, uma Célula Dendrítica fagocita uma célula infectada (via endossômica), mas consegue desviar os antígenos virais para o citosol. Lá, eles entram na via do MHC Classe I. Isso permite que a DC ative células T CD8+ contra vírus ou tumores que não infectam a própria DC.</p>
+                
+                <div class="image-placeholder">
+                    <img src="MHC_Apresentacao_Cruzada.png" alt="Apresentação cruzada de antígenos para células T CD8+" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div class="image-caption"><strong>Figura 8: Apresentação cruzada de antígenos para células T CD8+.</strong> As células infectadas com microrganismos intracelulares, tais como vírus, são endocitadas pelas células dendríticas e os antígenos dos microrganismos infecciosos são transportados para o citosol e processados e apresentados em associação com moléculas do MHC da classe I às células T CD8+ (Fig. 6-16). Desta forma, as células dendríticas são capazes de apresentar antígenos vesiculares endocitados pela via da classe I. Observe que as mesmas APCs de apresentação cruzada podem apresentar antígenos associados ao MHC da classe II de microrganismos para o reconhecimento pelas células T auxiliares CD4+.</div>
+                </div>
+            </section>
+
+            <section id="resumo-fisiologico">
+                <h2>6. Significado Fisiológico</h2>
+                <p>A segregação das vias garante a resposta imune correta:</p>
+                <ul>
+                    <li><strong>Patógenos Intracelulares (Citosol):</strong> Apresentados via MHC I → Ativam CD8+ → Morte da célula infectada (única forma de eliminar o reservatório).</li>
+                    <li><strong>Patógenos Extracelulares (Vesículas/Fluido):</strong> Apresentados via MHC II → Ativam CD4+ → Auxílio para produção de anticorpos (Células B) ou ativação de macrófagos para destruir o que fagocitaram.</li>
+                </ul>
+            </section>
+
+        </div>
+    </div>
+    
+    <!-- Modal for Tooltips -->
+    <div id="infoModal" class="efetores-modal">
+        <div class="efetores-modal-content">
+            <span class="close-btn" onclick="window.closeModal()">&times;</span>
+            <h3 id="modalTitle" style="color: var(--color-primary);"></h3>
+            <div id="modalText" style="line-height: 1.6; color: #4a5568;"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function() {
+       
+        // 1. Definição e Merge dos Tooltips
+        Object.assign(window.tooltips, {
+            'peptidio': {
+                title: 'Peptídeo',
+                text: 'Fragmento curto de proteína. As células T reconhecem sequências lineares de aminoácidos resultantes da digestão proteolítica de proteínas maiores.'
+            },
+            'restricao-mhc': {
+                title: 'Restrição pelo MHC',
+                text: 'Princípio fundamental onde uma célula T só pode reconhecer um antígeno estranho se ele estiver ligado a uma molécula do MHC próprio. A célula T "vê" o complexo peptídio + MHC.'
+            },
+            'apc-profissional': {
+                title: 'APC Profissional',
+                text: 'Células especializadas (Células Dendríticas, Macrófagos e Células B) capazes de expressar MHC de Classe II e moléculas co-estimuladoras necessárias para ativar células T CD4+.'
+            },
+            'celula-t-naive': {
+                title: 'Célula T Naïve (Virgem)',
+                text: 'Linfócito T maduro que saiu do timo mas ainda não encontrou seu antígeno específico. Requer ativação potente por Células Dendríticas para iniciar a expansão clonal.'
+            },
+            'proteassoma': {
+                title: 'Proteassoma',
+                text: 'Complexo enzimático cilíndrico presente no citoplasma responsável por degradar proteínas marcadas com ubiquitina em peptídeos. Essencial para a via do MHC Classe I.'
+            },
+            'tap': {
+                title: 'TAP (Transporter associated with Antigen Processing)',
+                text: 'Proteína transportadora localizada na membrana do Retículo Endoplasmático (RE). Bombeia ativamente peptídeos do citosol para o lúmen do RE para se ligarem ao MHC I.'
+            },
+            'cadeia-invariante': {
+                title: 'Cadeia Invariante (Ii)',
+                text: 'Proteína chaperona que se liga ao MHC Classe II recém-sintetizado no RE. Ela bloqueia a fenda de ligação, impedindo que peptídeos endógenos se liguem, e direciona o MHC II para os endossomas tardios.'
+            },
+            'clip': {
+                title: 'CLIP (Class II-associated Invariant Chain Peptide)',
+                text: 'Pequeno fragmento remanescente da Cadeia Invariante que fica alojado na fenda do MHC II após a digestão enzimática. Precisa ser removido pelo HLA-DM para permitir a ligação do antígeno.'
+            }
+        });
+
+        // 2. Geração do Índice de Conteúdo (TOC)
+        const content = document.querySelector('.efetores-content');
+        const tocList = document.getElementById('toc-list-efetores');
+
+        if (content && tocList) {
+            tocList.innerHTML = '';
+            const sections = content.querySelectorAll('section');
+
+            sections.forEach(section => {
+                const h2 = section.querySelector('h2');
+                if (!h2) return;
+                const sectionTitle = h2.textContent;
+                const sectionId = section.id;
+
+                let listItem = document.createElement('li');
+                let link = document.createElement('a');
+                link.href = '#' + sectionId;
+                link.textContent = sectionTitle;
+                listItem.appendChild(link);
+
+                // Adiciona links de subseções (h3)
+                const subHeadings = section.querySelectorAll('h3');
+                if (subHeadings.length > 0) {
+                    let subList = document.createElement('ul');
+                    subHeadings.forEach(sub => {
+                        let subListItem = document.createElement('li');
+                        let subLink = document.createElement('a');
+                        
+                        // Cria um ID se não existir
+                        let subId = sub.id;
+                        if (!subId) {
+                             subId = sub.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                             sub.id = subId;
+                        }
+                        
+                        subLink.href = '#' + subId;
+                        subLink.textContent = sub.textContent;
+                        subLink.classList.add('sub-link');
+                        subListItem.appendChild(subLink);
+                        subList.appendChild(subListItem);
+                    });
+                    listItem.appendChild(subList);
+                }
+                tocList.appendChild(listItem);
+            });
+
+            // Scroll suave
+            tocList.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    e.preventDefault();
+                    const href = e.target.getAttribute('href');
+                    if (!href) return;
+                    const targetId = href.substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        // Offset para o cabeçalho fixo ou espaço visual
+                        const yOffset = -20; 
+                        const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                        
+                        window.scrollTo({top: y, behavior: 'smooth'});
+                        window.toggleEfetoresMenu();
+                    }
+                }
+            });
+        }
+
+        // 3. Menu Toggle Logic
+        window.toggleEfetoresMenu = function() {
+            const dropdown = document.getElementById('efetores-toc-dropdown');
+            if (dropdown) dropdown.classList.toggle('active');
+        }
+
+        // Close menu when clicking outside
+        window.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('efetores-toc-dropdown');
+            const btn = document.querySelector('.efetores-menu-btn');
+            if (dropdown && btn && !dropdown.contains(e.target) && !btn.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+    })();
+</script>
+`,
+
+        midia: {
+            audio: null,
+            video: null,
+            infographics: null
+        },
+        flashcards: [],
+        quiz: {
+            basico: [],
+            avancado: []
+        },
+        abertas: []
+    },
+
+    // ========================================================================
+    // ASSUNTO: TCR, BCR e transdução de sinais
+    // ========================================================================
+    "tcr_bcr": {
+        titulo: "TCR, BCR e transdução de sinais",
+        resumo: `
+<style>
+    /* CSS Scoped for Report */
+    .efetores-wrapper {
+        --color-primary: #005f73; /* Azul Petróleo Profundo - Profissional e Científico */
+        --color-secondary: #0a9396; /* Azul esverdeado */
+        --color-background: #fdfdfd;
+        --color-text: #2b2d42;
+        --color-highlight: #e9c46a; /* Tom mostarda para destaque suave */
+        --color-complement: #9b2226; /* Vermelho queimado para destaques importantes */
+        --color-light-bg: #e8f1f2;
+        --color-border: #daeef0;
+        
+        font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+        background-color: #f0f4f8; /* Fundo geral da página */
+        color: var(--color-text);
+        line-height: 1.8;
+        padding: 0;
+        margin: 0;
+    }
+
+    .efetores-container {
+        display: block;
+        max-width: 1024px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    /* Floating Menu Button */
+    .efetores-menu-btn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 2000;
+        background-color: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    .efetores-menu-btn:hover {
+        transform: scale(1.1);
+        background-color: var(--color-secondary);
+    }
+
+    /* Menu Dropdown */
+    .efetores-toc-dropdown {
+        position: fixed;
+        top: 80px;
+        left: 20px;
+        width: 300px;
+        max-height: 70vh;
+        overflow-y: auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        padding: 25px;
+        z-index: 2000;
+        display: none;
+        border-left: 5px solid var(--color-primary);
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    /* Scrollbar customizada para o menu */
+    .efetores-toc-dropdown::-webkit-scrollbar {
+        width: 6px;
+    }
+    .efetores-toc-dropdown::-webkit-scrollbar-thumb {
+        background-color: var(--color-secondary);
+        border-radius: 3px;
+    }
+
+    .efetores-toc-dropdown.active {
+        display: block;
+    }
+    
+    .efetores-toc-dropdown h3 {
+        margin-top: 0;
+        color: var(--color-primary);
+        font-size: 1.2rem;
+        border-bottom: 2px solid var(--color-light-bg);
+        padding-bottom: 10px;
+    }
+
+    .efetores-toc-dropdown ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .efetores-toc-dropdown li {
+        margin-bottom: 5px;
+    }
+
+    .efetores-toc-dropdown a {
+        text-decoration: none;
+        color: var(--color-text);
+        display: block;
+        padding: 8px 10px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        transition: all 0.2s;
+        border-left: 3px solid transparent;
+    }
+
+    .efetores-toc-dropdown a:hover {
+        background-color: var(--color-light-bg);
+        color: var(--color-primary);
+        border-left: 3px solid var(--color-secondary);
+    }
+    
+    .efetores-toc-dropdown a.sub-link {
+        padding-left: 25px;
+        font-size: 0.85em;
+        color: #666;
+    }
+
+    /* Content Styling */
+    .efetores-content {
+        background-color: #fff;
+        padding: 60px;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .efetores-content header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .efetores-content h1 {
+        color: var(--color-primary);
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        font-size: 2.5rem;
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+    }
+    
+    .efetores-content .intro-text {
+        font-size: 1.2rem;
+        color: #555;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .efetores-content h2 {
+        margin-top: 60px;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid var(--color-light-bg);
+        color: var(--color-primary);
+        font-size: 1.8rem;
+        position: relative;
+    }
+    
+    .efetores-content h2::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 80px;
+        height: 2px;
+        background-color: var(--color-secondary);
+    }
+    
+    .efetores-content h3 {
+        margin-top: 40px;
+        margin-bottom: 15px;
+        color: var(--color-secondary);
+        font-size: 1.4rem;
+        font-weight: 600;
+    }
+    
+    .efetores-content h4 {
+        margin-top: 30px;
+        color: #444;
+        font-weight: 700;
+        font-size: 1.15rem;
+    }
+
+    .efetores-content p {
+        margin-bottom: 20px;
+        text-align: justify;
+        font-size: 1.05rem;
+        color: #333;
+    }
+    
+    .efetores-content ul, .efetores-content ol {
+        margin-bottom: 25px;
+        padding-left: 20px;
+    }
+    
+    .efetores-content li {
+        margin-bottom: 10px;
+        padding-left: 10px;
+    }
+    
+    .efetores-content li::marker {
+        color: var(--color-secondary);
+        font-weight: bold;
+    }
+
+    /* Tooltip/Item Clicável */
+    .tooltip-trigger, .complement-trigger {
+        color: var(--color-primary);
+        cursor: pointer;
+        border-bottom: 1px dashed var(--color-primary);
+        font-weight: 600;
+        transition: all 0.2s;
+        background-color: rgba(0, 95, 115, 0.05);
+        padding: 0 4px;
+        border-radius: 4px;
+    }
+
+    .complement-trigger {
+        color: var(--color-complement);
+        border-bottom: 1px dashed var(--color-complement);
+        background-color: rgba(155, 34, 38, 0.05);
+    }
+
+    .tooltip-trigger:hover {
+        background-color: var(--color-primary);
+        color: white;
+        border-bottom: none;
+    }
+    
+    .complement-trigger:hover {
+        background-color: var(--color-complement);
+        color: white;
+        border-bottom: none;
+    }
+
+    /* Caixas de Informação/Quadros Explicativos (<details>) */
+    .efetores-content details {
+        margin: 30px 0;
+        background-color: #f8fdfe;
+        border: 1px solid var(--color-border);
+        border-left: 6px solid var(--color-secondary);
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .efetores-content details[open] {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .efetores-content summary {
+        padding: 15px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        color: var(--color-primary);
+        font-size: 1.1rem;
+        background-color: rgba(255,255,255,0.5);
+        list-style: none; /* Remove default arrow */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .efetores-content summary::after {
+        content: '+';
+        font-size: 1.5rem;
+        color: var(--color-secondary);
+        font-weight: 300;
+    }
+    
+    .efetores-content details[open] summary::after {
+        content: '-';
+    }
+    
+    .efetores-content details p {
+        margin: 0;
+        padding: 20px;
+        border-top: 1px solid var(--color-border);
+        color: #4a4a4a;
+        background-color: #fff;
+    }
+
+    /* Tabelas */
+    .table-responsive {
+        overflow-x: auto;
+        margin: 30px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .efetores-content table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95em;
+        background: white;
+    }
+
+    .efetores-content th, .efetores-content td {
+        padding: 18px 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    .efetores-content th {
+        background-color: var(--color-primary);
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border: none;
+    }
+
+    .efetores-content tr:nth-child(even) {
+        background-color: #fcfcfc;
+    }
+    
+    .efetores-content tr:hover {
+        background-color: #f0f7f8;
+    }
+    
+    /* Destaque para Citações/Observações */
+    .citation-note {
+        font-style: italic;
+        font-size: 1rem;
+        color: #555;
+        margin: 30px 0;
+        padding: 20px;
+        border-left: 4px solid var(--color-highlight);
+        background: #fffdf5;
+        border-radius: 0 8px 8px 0;
+    }
+    
+    .citation-note strong {
+        color: #d4a017;
+        display: block;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
+
+    /* Tags de Imagem */
+    .image-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: #fdfdfd;
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        text-align: center;
+        color: #64748b;
+        max-width: 100%;
+        transition: border-color 0.3s;
+    }
+    
+    .image-placeholder:hover {
+        border-color: var(--color-secondary);
+        background-color: #f8fdfe;
+    }
+    
+    .image-placeholder p {
+        font-size: 0.95rem;
+        margin-top: 15px;
+        margin-bottom: 0;
+        color: #555;
+        font-weight: 500;
+        text-align: center;
+    }
+    
+    .image-caption {
+        font-size: 0.85rem;
+        color: #777;
+        margin-top: 10px;
+        font-style: italic;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Modal Styles */
+    .efetores-modal {
+        display: none; 
+        position: fixed; 
+        z-index: 3000; 
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden; 
+        background-color: rgba(0,0,0,0.6); 
+        backdrop-filter: blur(3px);
+    }
+
+    .efetores-modal-content {
+        background-color: #fff;
+        margin: 10% auto; 
+        padding: 30px;
+        border: none;
+        width: 90%; 
+        max-width: 600px;
+        border-radius: 12px;
+        position: relative;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    .efetores-modal-content h3 {
+        margin-top: 0;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+        color: var(--color-primary);
+        font-size: 1.5rem;
+    }
+    
+    @keyframes slideIn {
+        from { transform: translateY(30px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .close-btn {
+        color: #aaa;
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        font-size: 28px;
+        font-weight: bold;
+        line-height: 1;
+        transition: color 0.2s;
+    }
+
+    .close-btn:hover,
+    .close-btn:focus {
+        color: var(--color-complement);
+        text-decoration: none;
+        cursor: pointer;
+    }
+    
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .efetores-content {
+            padding: 30px 20px;
+        }
+        .efetores-content h1 {
+            font-size: 1.8rem;
+        }
+        .efetores-content h2 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<div class="efetores-wrapper">
+    <!-- Floating Menu Button -->
+    <button class="efetores-menu-btn" onclick="window.toggleEfetoresMenu()" title="Índice de Tópicos">
+        ☰
+    </button>
+
+    <!-- Dropdown Menu -->
+    <div id="efetores-toc-dropdown" class="efetores-toc-dropdown">
+        <h3>Índice</h3>
+        <ul id="toc-list-efetores">
+            <!-- TOC generated by JS -->
+        </ul>
+    </div>
+
+    <div class="efetores-container">
+        <div class="efetores-content">
+            <header>
+                <h1>Receptores de antígenos de linfócitos T e B; transdução de sinais dos receptores imunológicos</h1>
+                
+
+            </header>
+            
+            <!-- SEÇÃO 1: INTRODUÇÃO E CONCEITOS GERAIS -->
+            <section id="familia-receptores">
+                <h2>1. A Família dos Receptores Imunológicos</h2>
+                <p>Os receptores imunológicos constituem uma família sofisticada de complexos proteicos, fundamentais para a imunidade adaptativa e inata. Tipicamente, esses receptores pertencem à superfamília das <span class="tooltip-trigger" data-tooltip="imunoglobulina">imunoglobulinas (Ig)</span>. A característica arquitetônica central desses sistemas é a <strong>segregação de funções</strong>:</p>
+                <ul>
+                    <li><strong>Reconhecimento do Ligante:</strong> Realizado por cadeias extracelulares (geralmente com domínios variáveis).</li>
+                    <li><strong>Sinalização Intracelular:</strong> Realizada por cadeias ou módulos associados que contêm motivos baseados em tirosina.</li>
+                </ul>
+
+                <p>Frequentemente, as proteínas de sinalização estão fisicamente próximas a quinases da <span class="tooltip-trigger" data-tooltip="familia-src">família Src</span>, que se encontram ancoradas à face interna da membrana plasmática por âncoras lipídicas.</p>
+
+                <div class="image-placeholder">
+                    <img src="familia_receptores.png" alt="Família de receptores imunológicos" style="max-width: 100%; height: auto; border-radius: 8px;">
+                    <p><strong>Figura 1:</strong> Membros selecionados da família dos receptores imunológicos. Quatro membros selecionados da família de receptores imunes estão representados. Tipicamente, receptores imunes que ativam células do sistema imunológico possuem cadeias polipeptídicas separadas para o reconhecimento e cadeias de polipeptídios associados que contêm ITAMs citossólicas. Exemplos aqui apresentados incluem o receptor de células B (BCR), o receptor de células T (TCR), e receptor de alta afinidade para IgE (FcεRI). Os receptores inibitórios no sistema imunológico têm normalmente motivos ITIM sobre a porção citossólica da mesma cadeia que utiliza o seu domínio extracelular por reconhecimento do ligante. O receptor inibitório mostrado, FcgRIIB, encontra-se em células B e células mieloides.</p>
+                </div>
+
+                <details>
+                    <summary>Entendendo os Motivos de Tirosina: ITAMs vs ITIMs</summary>
+                    <p>A sinalização é ditada por sequências específicas de aminoácidos nas caudas citoplasmáticas:</p>
+                    <ul>
+                        <li><strong>ITAM (Motivo de Ativação):</strong> Responsável por iniciar a cascata de ativação. Possui a sequência consenso <code>YxxL/I(x)₆₋₈YxxL/I</code>. Quando as duas tirosinas (Y) são fosforiladas, elas recrutam quinases da família <span class="tooltip-trigger" data-tooltip="syk-zap70">Syk/ZAP-70</span>.</li>
+                        <li><strong>ITIM (Motivo de Inibição):</strong> Responsável por neutralizar o sinal. Possui a sequência consenso <code>V/L/IxYxxL</code>. Quando fosforilado, recruta fosfatases (como SHP-1 ou SHIP) que removem os grupos fosfato, "desligando" a célula.</li>
+                    </ul>
+                </details>
+            </section>
+
+            <!-- SEÇÃO 2: O RECEPTOR DE CÉLULAS T -->
+            <section id="complexo-tcr">
+                <h2>2. O Complexo Receptor de Células T (TCR)</h2>
+                <p>O reconhecimento de antígenos por células T é mediado por um complexo multiproteico. Ao contrário das imunoglobulinas, o TCR nunca é secretado; ele funciona exclusivamente como um sensor de membrana.</p>
+
+                <h3>2.1 Estrutura do Heterodímero αβ</h3>
+                <p>A maioria das células T (chamadas T αβ) expressa um receptor formado por duas cadeias: alfa (α) e beta (β). Ambas possuem:</p>
+                <ul>
+                    <li>Um domínio Variável (V) N-terminal: Onde ocorre o reconhecimento do antígeno. Contém 3 regiões hipervariáveis ou <span class="tooltip-trigger" data-tooltip="cdrs">CDRs</span>.</li>
+                    <li>Um domínio Constante (C).</li>
+                    <li>Uma região transmembrana hidrofóbica com resíduos carregados positivamente (essenciais para a montagem do complexo).</li>
+                    <li>Uma cauda citoplasmática curta (insuficiente para sinalização própria).</li>
+                </ul>
+                
+                <div class="image-placeholder">
+                    <img src="estrutura_tcr.png" alt="Estrutura do receptor de células T" style="max-width: 100%; height: auto; border-radius: 8px;">
+                    <p><strong>Figura 2:</strong> Estrutura do receptor de células T. O diagrama esquemático do TCR ab (à esquerda) mostra os domínios de um TCR específico típico de um complexo peptídio-MHC. A porção do TCR de ligação ao antígeno é formada pelos domínios Vb e Va. O diagrama de fita (direita) mostra a estrutura da porção extracelular de um TCR conforme revelado por cristalografia de raios-X. O segmento hipervariável que forma o peptídio-MHC local de ligação está no topo.</p>
+                </div>
+
+                <h3>2.2 O Complexo de Sinalização: CD3 e Cadeia ζ</h3>
+                <p>Como o TCR αβ tem caudas curtas, a transdução do sinal depende de proteínas invariáveis associadas não covalentemente:</p>
+                <ul>
+                    <li><strong>Proteínas CD3:</strong> Formadas pelas cadeias γ, δ e ε. Organizadas geralmente como heterodímeros (CD3γε e CD3δε).</li>
+                    <li><strong>Cadeia Zeta (ζ):</strong> Um homodímero com uma longa cauda citoplasmática.</li>
+                </ul>
+
+                <div class="image-placeholder">
+                    <img src="complexo_tcr.png" alt="Componentes do complexo TCR" style="max-width: 100%; height: auto; border-radius: 8px;">
+                    <p><strong>Figura 3:</strong> Componentes do complexo TCR. O complexo de TCR de células T do MHC restrito consiste no TCR ab não covalentemente ligado ao CD3 e a proteínas ζ. A associação destas proteínas umas com as outras é mediada por resíduos carregados nas suas regiões transmembranares (não mostrado).</p>
+                </div>
+                
+                <div class="citation-note">
+                    <strong>Ponto Crítico de Estudo</strong>
+                    O TCR reconhece o antígeno, mas é o complexo CD3/ζ que "avisa" a célula. O complexo TCR completo possui <strong>10 ITAMs</strong> no total (graças aos múltiplos ITAMs na cadeia ζ), permitindo uma amplificação robusta do sinal.
+                </div>
+            </section>
+
+            <!-- SEÇÃO 3: SINALIZAÇÃO TCR -->
+            <section id="sinalizacao-tcr">
+                <h2>3. Mecanismos de Sinalização em Células T</h2>
+                
+                <h3>3.1 O Papel dos Co-receptores CD4 e CD8</h3>
+                <p>A ativação eficiente requer que co-receptores se liguem simultaneamente à molécula de MHC. Isso estabiliza a interação e, crucialmente, recruta a quinase <span class="complement-trigger" data-tooltip="lck">Lck</span> para a proximidade dos ITAMs.</p>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Característica</th>
+                                <th>Co-receptor CD4</th>
+                                <th>Co-receptor CD8</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Estrutura</strong></td>
+                                <td>Monômero com 4 domínios Ig extracelulares.</td>
+                                <td>Heterodímero αβ ligado por pontes dissulfeto.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ligante no MHC</strong></td>
+                                <td>Liga-se aos domínios invariáveis α2 e β2 do <strong>MHC Classe II</strong>.</td>
+                                <td>Liga-se ao domínio invariável α3 do <strong>MHC Classe I</strong>.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Função Enzimática</strong></td>
+                                <td colspan="2">Ambos têm a quinase <strong>Lck</strong> associada constitutivamente à sua cauda citoplasmática.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="image-placeholder">
+                    <img src="fosforilacao_tcr.png" alt="Eventos iniciais da fosforilação" style="max-width: 100%; height: auto; border-radius: 8px;">
+                    <p><strong>Figura 4:</strong> Eventos iniciais da fosforilação da tirosina durante a ativação de células T. Com o reconhecimento do antígeno, há agrupamento de complexos de TCR com os correceptores (CD4, neste caso). A Lck associada ao CD4 torna-se ativa e fosforila as tirosinas nos ITAMs de CD3 e cadeias ζ.</p>
+                </div>
+
+                <h3>3.2 A Sinapse Imunológica</h3>
+                <p>O contato entre a célula T e a APC (Célula Apresentadora de Antígeno) organiza-se em uma estrutura altamente ordenada chamada <strong>Sinapse Imunológica</strong> ou SMAC (Supramolecular Activation Cluster).</p>
+                
+                <details>
+                    <summary>Organização da SMAC (c-SMAC vs p-SMAC)</summary>
+                    <p><strong>c-SMAC (Central):</strong> Contém o TCR, CD3, co-receptores (CD4/CD8), co-estimuladores (CD28) e enzimas de sinalização como PKC-θ. É o centro da ativação e, posteriormente, da degradação (downregulation) dos receptores.</p>
+                    <p><strong>p-SMAC (Periférico):</strong> Anel externo composto por moléculas de adesão, principalmente as integrinas como <span class="tooltip-trigger" data-tooltip="lfa-1">LFA-1</span> ligada ao ICAM-1, que estabilizam a interação celular.</p>
+                </details>
+
+                <div class="image-placeholder">
+                    <img src="sinapse_imunologica.png" alt="Sinapse Imunológica" style="max-width: 100%; height: auto; border-radius: 8px;">
+                    <p><strong>Figura 5:</strong> Sinapse imunológica: visão esquemática da sinapse, mostrando a talina e LFA-1 na p-SMAC (verde) e PKC-θ e TCR no c-SMAC (vermelho).</p>
+                </div>
+
+                <h3>3.3 Fatores de Transcrição Ativados</h3>
+                <p>A cascata de fosforilação iniciada pela ZAP-70 resulta na ativação de três fatores de transcrição principais que migram para o núcleo para induzir a expressão de genes (ex: IL-2):</p>
+                <ol>
+                    <li><strong>NFAT (Fator Nuclear de Células T Ativadas):</strong> Dependente de cálcio. A enzima <span class="complement-trigger" data-tooltip="calcineurina">calcineurina</span> remove fosfatos do NFAT, permitindo sua entrada no núcleo. (Alvo da ciclosporina).</li>
+                    <li><strong>AP-1:</strong> Um dímero (Fos e Jun) ativado via cascata das MAP quinases (Ras/Rac).</li>
+                    <li><strong>NF-κB:</strong> Ativado pela via da PKC, essencial para síntese de citocinas.</li>
+                </ol>
+            </section>
+
+            <!-- SEÇÃO 4: O RECEPTOR DE CÉLULAS B -->
+            <section id="complexo-bcr">
+                <h2>4. O Complexo Receptor de Células B (BCR)</h2>
+                <p>O BCR permite que células B reconheçam antígenos solúveis ou ligados a membranas sem a necessidade de processamento via MHC.</p>
+
+                <h3>4.1 Comparação Estrutural e Funcional: TCR vs BCR</h3>
+                <p>Embora análogos, existem diferenças fundamentais entre os receptores T e B, conforme detalhado na tabela abaixo:</p>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Propriedade</th>
+                                <th>TCR (Célula T)</th>
+                                <th>BCR (Imunoglobulina de Membrana)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Componentes de Reconhecimento</strong></td>
+                                <td>Heterodímero αβ</td>
+                                <td>Cadeias Pesadas e Leves (IgM e IgD em naive)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Módulo de Sinalização</strong></td>
+                                <td>Complexo CD3 (γ, δ, ε) e Cadeias ζ</td>
+                                <td>Heterodímero <strong>Igα e Igβ</strong> (CD79a/CD79b)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Valência</strong></td>
+                                <td>Monovalente (1 sítio de ligação)</td>
+                                <td>Bivalente (2 sítios de ligação)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mutações Somáticas</strong></td>
+                                <td>Não ocorrem</td>
+                                <td>Sim (Maturação de afinidade)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Quinase ITAM associada</strong></td>
+                                <td>ZAP-70</td>
+                                <td><span class="tooltip-trigger" data-tooltip="syk">Syk</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="image-placeholder">
+                    <img src="complexo_bcr.png" alt="Complexo receptor de antígenos das células B" style="max-width: 100%; height: auto; border-radius: 8px;">
+                    <p><strong>Figura 6:</strong> Complexo receptor de antígenos das células B. As IgM (e IgD) de membrana na superfície de células B maduras estão associadas às moléculas invariantes Igβ e Igα, que contêm ITAMs nas suas caudas citoplasmáticas que medeiam as funções de sinalização. Observe a semelhança com o complexo de TCR.</p>
+                </div>
+
+                <h3>4.2 Iniciação do Sinal: "Cross-Linking"</h3>
+                <p>A ativação do BCR depende fundamentalmente do agrupamento (<em>cross-linking</em>) de múltiplos receptores por um antígeno multivalente. Isso aproxima as quinases da família Src (Lyn, Fyn, Blk) dos ITAMs nas cadeias Igα/Igβ, iniciando a cascata.</p>
+                
+
+            </section>
+
+            <!-- SEÇÃO 5: CO-RECEPTOR DE CÉLULAS B -->
+            <section id="coreceptor-b">
+                <h2>5. O Complexo Co-receptor de Células B e o Complemento</h2>
+                <p>Assim como as células T usam CD4/8, as células B possuem um poderoso sistema co-receptor que conecta a imunidade inata à adaptativa.</p>
+
+                <h3>5.1 O Complexo CR2-CD19-CD81</h3>
+                <p>Este complexo trimolecular atua como um amplificador de sinal:</p>
+                <ul>
+                    <li><strong>CR2 (CD21):</strong> Receptor para <span class="complement-trigger" data-tooltip="c3d">C3d</span>. O C3d é um fragmento do sistema complemento que recobre patógenos.</li>
+                    <li><strong>CD19:</strong> A molécula de sinalização. Quando o CR2 liga-se ao C3d, o CD19 é fosforilado e recruta PI3-Kinase.</li>
+                    <li><strong>CD81:</strong> Proteína estrutural (tetraspanina).</li>
+                </ul>
+
+                <div class="image-placeholder">
+                    <img src="papel_complemento.png" alt="Papel do complemento na ativação da célula B" style="max-width: 100%; height: auto; border-radius: 8px;">
+                    <p><strong>Figura 7:</strong> Papel do complemento na ativação da célula B. As células B expressam um complexo formado pelo receptor do complemento CR2, CD19, e CD81. Os antígenos microbianos que se ligaram ao fragmento do complemento C3d podem simultaneamente se acoplar tanto à molécula CR2 quanto à Ig de membrana na superfície de uma célula B. Isso conduz ao início da cascata de sinalização a partir do complexo BCR e do complexo CR2 uma vez que a resposta aos complexos C3d-antígeno é muito maior em comparação com a resposta ao antígeno sozinho.</p>
+                </div>
+
+                <div class="citation-note">
+                    <strong>Sinergia Inata-Adaptativa</strong>
+                    Quando uma célula B reconhece um antígeno (via BCR) que também está marcado com complemento (reconhecido via CR2), o sinal de ativação é drasticamente amplificado (1.000 a 10.000 vezes), garantindo resposta forte contra patógenos opsonizados.
+                </div>
+            </section>
+            
+        </div>
+    </div>
+    
+    <!-- Modal for Tooltips -->
+    <div id="infoModal" class="efetores-modal">
+        <div class="efetores-modal-content">
+            <span class="close-btn" onclick="window.closeModal()">&times;</span>
+            <h3 id="modalTitle"></h3>
+            <div id="modalText"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------
+    // Inicialização e Lógica de TOC
+    // --------------------------------------------------------
+    (function() {
+        
+        // 2. Geração Automática do Índice (TOC)
+        const content = document.querySelector('.efetores-content');
+        const tocList = document.getElementById('toc-list-efetores');
+
+        if (content && tocList) {
+            tocList.innerHTML = '';
+            const sections = content.querySelectorAll('section');
+
+            sections.forEach(section => {
+                const h2 = section.querySelector('h2');
+                if (!h2) return;
+                
+                // Limpa o texto do H2 (pode ter spans ou formatação) para o link
+                const sectionTitle = h2.innerText; 
+                const sectionId = section.id;
+
+                let listItem = document.createElement('li');
+                let link = document.createElement('a');
+                link.href = '#' + sectionId;
+                link.textContent = sectionTitle;
+                listItem.appendChild(link);
+
+                // Procura por H3 dentro da seção
+                const subHeadings = section.querySelectorAll('h3');
+                if (subHeadings.length > 0) {
+                    let subList = document.createElement('ul');
+                    subHeadings.forEach((sub, index) => {
+                        let subListItem = document.createElement('li');
+                        let subLink = document.createElement('a');
+                        
+                        // Garante que o H3 tenha um ID
+                        if (!sub.id) {
+                            sub.id = sectionId + '-sub-' + index;
+                        }
+                        
+                        subLink.href = '#' + sub.id;
+                        subLink.textContent = sub.innerText;
+                        subLink.classList.add('sub-link');
+                        subListItem.appendChild(subLink);
+                        subList.appendChild(subListItem);
+                    });
+                    listItem.appendChild(subList);
+                }
+                tocList.appendChild(listItem);
+            });
+
+            // Smooth Scroll e Fechar Menu ao clicar
+            tocList.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    e.preventDefault();
+                    const href = e.target.getAttribute('href');
+                    if (!href) return;
+                    const targetId = href.substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        // Offset para o cabeçalho fixo se houvesse, aqui deixamos um respiro
+                        const yOffset = -20; 
+                        const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                        
+                        window.scrollTo({top: y, behavior: 'smooth'});
+                        
+                        // Fecha o menu se estiver em mobile ou se desejar comportamento padrão
+                        const dropdown = document.getElementById('efetores-toc-dropdown');
+                        if (dropdown) dropdown.classList.remove('active');
+                    }
+                }
+            });
+        }
+
+        // 3. Menu Toggle Logic
+        window.toggleEfetoresMenu = function() {
+            const dropdown = document.getElementById('efetores-toc-dropdown');
+            if (dropdown) dropdown.classList.toggle('active');
+        }
+
+        // Close menu when clicking outside
+        window.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('efetores-toc-dropdown');
+            const btn = document.querySelector('.efetores-menu-btn');
+            if (dropdown && btn && !dropdown.contains(e.target) && !btn.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+    })();
+</script>
+        `,
+        tooltips: {
+            'imunoglobulina': {
+                title: 'Superfamília das Imunoglobulinas (IgSF)',
+                text: 'Um grande grupo de proteínas de superfície celular e solúveis envolvidas no reconhecimento, ligação ou adesão processos de células. Caracterizam-se por possuírem domínios estruturais de "dobra de imunoglobulina" (sanduíche de folhas beta).'
+            },
+            'familia-src': {
+                title: 'Quinases da Família Src',
+                text: 'Tirosina quinases não receptoras (citoplasmáticas) que estão ancoradas à membrana plasmática por lipídios. São as primeiras enzimas a serem ativadas após o reconhecimento do antígeno. Exemplos: Lck e Fyn (Células T), Lyn, Fyn e Blk (Células B).'
+            },
+            'syk-zap70': {
+                title: 'Família Syk / ZAP-70',
+                text: 'Tirosina quinases citoplasmáticas cruciais que se ligam aos ITAMs fosforilados através de seus domínios SH2. ZAP-70 é predominante em células T e NK, enquanto Syk é predominante em células B.'
+            },
+            'cdrs': {
+                title: 'Regiões Determinantes de Complementariedade (CDRs)',
+                text: 'São as regiões hipervariáveis dentro dos domínios variáveis dos receptores (TCR ou BCR). São alças que formam a superfície de contato direto com o antígeno (ou complexo MHC-peptídeo).'
+            },
+            'lck': {
+                title: 'Lck (Lymphocyte-specific protein tyrosine kinase)',
+                text: 'Uma quinase da família Src que está constitutivamente associada às caudas citoplasmáticas dos co-receptores CD4 e CD8. É responsável pela fosforilação inicial dos ITAMs do complexo CD3.'
+            },
+            'lfa-1': {
+                title: 'LFA-1 (Antígeno 1 Associado à Função Leucocitária)',
+                text: 'Uma integrina fundamental na adesão celular. Na sinapse imunológica, ela forma o anel externo (p-SMAC), ligando-se ao ICAM-1 na célula apresentadora de antígeno para estabilizar o contato.'
+            },
+            'calcineurina': {
+                title: 'Calcineurina',
+                text: 'Uma fosfatase dependente de cálcio/calmodulina. Ela remove grupos fosfato do fator de transcrição NFAT no citoplasma, permitindo que ele entre no núcleo. É o alvo farmacológico de drogas imunossupressoras como a Ciclosporina e o Tacrolimo.'
+            },
+            'syk': {
+                title: 'Syk (Spleen tyrosine kinase)',
+                text: 'A quinase equivalente à ZAP-70 nas células B. Ela se liga aos ITAMs fosforilados da Igα/Igβ e é essencial para a transdução de sinal do BCR.'
+            },
+            'c3d': {
+                title: 'Fragmento C3d do Complemento',
+                text: 'Um produto de degradação do componente C3 do complemento. Ele permanece ligado covalentemente à superfície do microrganismo ou antígeno. O reconhecimento do C3d pelo receptor CR2 (CD21) na célula B serve como um potente "segundo sinal" de ativação.'
+            }
+        },
+        midia: {
+            audio: null,
+            video: null,
+            infographics: null
+        },
+        flashcards: [],
+        quiz: {
+            basico: [],
+            avancado: []
+        },
+        abertas: []
     }
 };

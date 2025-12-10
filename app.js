@@ -80,7 +80,7 @@ window.abrirAssunto = function (id) {
 
     if (btnVideo) {
         // Ocultar botão de vídeo para celulaseorgaos, anticorpos e inflamacao
-        if (id === 'Celulaseorgaos' || id === 'anticorpos' || id === 'inflamacao') {
+        if (id === 'Celulaseorgaos' || id === 'anticorpos' || id === 'inflamacao' || id === 'imunidade_inata' || id === 'mecanismos_efetores' || id === 'moleculas_mhc' || id === 'tcr_bcr') {
             btnVideo.style.display = 'none';
         } else {
             btnVideo.style.display = 'flex';
@@ -88,11 +88,15 @@ window.abrirAssunto = function (id) {
         }
     }
     if (btnAudio) {
-        btnAudio.style.display = 'flex';
-        btnAudio.onclick = () => window.playAudio(dadosAtuais.midia && dadosAtuais.midia.audio);
+        if (id === 'moleculas_mhc' || id === 'tcr_bcr') {
+            btnAudio.style.display = 'none';
+        } else {
+            btnAudio.style.display = 'flex';
+            btnAudio.onclick = () => window.playAudio(dadosAtuais.midia && dadosAtuais.midia.audio);
+        }
     }
     if (btnInfographics) {
-        if (id === 'inflamacao') {
+        if (id === 'inflamacao' || id === 'imunidade_inata' || id === 'mecanismos_efetores' || id === 'moleculas_mhc' || id === 'tcr_bcr') {
             btnInfographics.style.display = 'none';
         } else {
             btnInfographics.style.display = 'flex';
@@ -101,7 +105,7 @@ window.abrirAssunto = function (id) {
     }
 
     // Configurar background dinâmico (Gradiente Cyan-Pink com Anéis)
-    if (['intro', 'Celulaseorgaos', 'inflamacao', 'anticorpos'].includes(id)) {
+    if (['intro', 'Celulaseorgaos', 'inflamacao', 'anticorpos', 'imunidade_inata', 'mecanismos_efetores', 'moleculas_mhc', 'tcr_bcr'].includes(id)) {
         detailScreen.style.backgroundColor = "#06b6d4"; // Cyan fallback
         detailScreen.style.backgroundImage = `
             radial-gradient(circle at 10% 20%, transparent 50px, rgba(255,255,255,0.1) 51px, rgba(255,255,255,0.1) 65px, transparent 66px),
@@ -141,8 +145,23 @@ window.abrirResumo = function () {
     const area = document.getElementById('summary-content-area');
     area.innerHTML = dadosAtuais.resumo || "<p>Conteúdo indisponível.</p>";
     document.getElementById('summary-title').innerText = dadosAtuais.titulo;
+
+    // Merge tooltips if present
+    if (dadosAtuais.tooltips) {
+        Object.assign(window.tooltips, dadosAtuais.tooltips);
+    }
+
+    // Executar scripts inseridos via innerHTML (legacy support)
+    const scripts = area.querySelectorAll('script');
+    scripts.forEach(oldScript => {
+        const newScript = document.createElement('script');
+        newScript.textContent = oldScript.textContent;
+        document.body.appendChild(newScript);
+    });
+
     navegar(detailScreen, summaryScreen);
 }
+
 window.sairResumo = () => navegar(summaryScreen, detailScreen);
 
 // --- FLASHCARDS ---
@@ -428,3 +447,47 @@ window.entrarApp = () => {
         homeScreen.classList.remove('hidden');
     }
 })();
+
+// --- GLOBAL MODAL LOGIC ---
+window.tooltips = {}; // Global storage for tooltips
+
+window.openModal = function (key) {
+    const data = window.tooltips[key];
+    const modal = document.getElementById('infoModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalText = document.getElementById('modalText');
+
+    if (data && modal && modalTitle && modalText) {
+        modalTitle.textContent = data.title;
+        modalText.innerHTML = data.text;
+        modal.style.display = 'block';
+    } else {
+        console.warn(`Tooltip data not found for key: ${key}`);
+    }
+}
+
+window.closeModal = function () {
+    const modal = document.getElementById('infoModal');
+    if (modal) modal.style.display = 'none';
+}
+
+// Close modal when clicking outside
+// Close modal when clicking outside
+window.onclick = function (event) {
+    const modal = document.getElementById('infoModal');
+    if (event.target === modal) {
+        window.closeModal();
+    }
+}
+
+// Global Event Delegation for Tooltips
+document.addEventListener('click', function (event) {
+    const target = event.target.closest('.tooltip-trigger, .complement-trigger');
+    if (target) {
+        const key = target.getAttribute('data-tooltip');
+        if (key) {
+            event.preventDefault();
+            window.openModal(key);
+        }
+    }
+});

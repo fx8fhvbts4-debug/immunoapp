@@ -17,14 +17,16 @@
             <div class="welcome-content">
                 <div class="welcome-icon"><img src="icon_cell_final.png" alt="Immunoapp Icon"
                         style="width: 150px; height: auto;"> <span
-                        style="font-size: 1rem; display: block; margin-top: 5px;">v2.0</span></div>
-                <h2>Prezado estudante,</h2>
+                        style="font-size: 1rem; display: block; margin-top: 5px;"></span></div>
+                <h2>Olá, estudante! 👋</h2>
                 <p>
-                    Seja muito bem-vindo ao Immunoapp!<br><br>
-                    O material que você encontrará aqui foi criado com suporte de Inteligência Artificial e revisado
-                    integralmente pelo professor para assegurar confiabilidade e precisão. Este é um espaço de apoio ao
-                    aprendizado, pensado para complementar suas leituras e aulas.<br><br>
-                    <strong>Não se esqueça: nada substitui a leitura e o estudo do livro didático.</strong>
+                    Bem-vindo ao ImmunoApp — seu novo espaço de apoio no estudo da imunologia!<br><br>
+                    Todo o conteúdo que você verá aqui foi desenvolvido com auxílio de Inteligência Artificial e
+                    cuidadosamente revisado pelo professor, garantindo qualidade, clareza e confiabilidade.<br><br>
+                    Este app foi pensado para turbinar seu aprendizado, complementar suas leituras e ajudar você a
+                    navegar pelos principais conceitos da imunologia de forma leve, rápida e acessível.<br><br>
+                    Prepare-se para explorar, revisar e consolidar conhecimentos de maneira prática e interativa. Boa
+                    jornada! 💡🧬
                 </p>
                 <button class="control-btn btn-next welcome-btn" onclick="entrarApp()">Li e Concordo</button>
             </div>
@@ -79,6 +81,16 @@
                             </div>
                         </div>
 
+                        <div class="subject-card" data-id="imunidade_inata" onclick="abrirAssunto('imunidade_inata')">
+                            <div class="card-visual gradient-2">
+                                <div class="card-icon">🛡️</div>
+                            </div>
+                            <div class="subject-info">
+                                <div class="subject-title">Imunidade Inata</div>
+                                <div class="subject-subtitle">Primeira linha de defesa</div>
+                            </div>
+                        </div>
+
                         <div class="subject-card" data-id="anticorpos" onclick="abrirAssunto('anticorpos')">
                             <div class="card-visual gradient-4">
                                 <div class="card-icon">🛡️</div>
@@ -86,6 +98,37 @@
                             <div class="subject-info">
                                 <div class="subject-title">Anticorpos</div>
                                 <div class="subject-subtitle">Estrutura e função</div>
+                            </div>
+                        </div>
+
+                        <div class="subject-card" data-id="mecanismos_efetores"
+                            onclick="abrirAssunto('mecanismos_efetores')">
+                            <div class="card-visual gradient-1">
+                                <div class="card-icon">⚔️</div>
+                            </div>
+                            <div class="subject-info">
+                                <div class="subject-title">Mecanismos efetores de anticorpos e Sistema complemento</div>
+                                <div class="subject-subtitle">Ação e eliminação</div>
+                            </div>
+                        </div>
+
+                        <div class="subject-card" data-id="moleculas_mhc" onclick="abrirAssunto('moleculas_mhc')">
+                            <div class="card-visual gradient-3">
+                                <div class="card-icon">🧬</div>
+                            </div>
+                            <div class="subject-info">
+                                <div class="subject-title">MHC e apresentação de antígenos para linfócitos T</div>
+                                <div class="subject-subtitle">Apresentação de antígenos</div>
+                            </div>
+                        </div>
+
+                        <div class="subject-card" data-id="tcr_bcr" onclick="abrirAssunto('tcr_bcr')">
+                            <div class="card-visual gradient-4">
+                                <div class="card-icon">📡</div>
+                            </div>
+                            <div class="subject-info">
+                                <div class="subject-title">TCR, BCR e transdução de sinais</div>
+                                <div class="subject-subtitle">Receptores e Sinalização</div>
                             </div>
                         </div>
                     </div>
